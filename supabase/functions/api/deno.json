@@ -1,0 +1,14 @@
+{
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false
+  },
+  "imports": {
+    "crypto": "node:crypto",
+    "express": "npm:express@4.21.2",
+    "pg": "npm:pg@8.13.1",
+    "qrcode": "npm:qrcode@1.5.4",
+    "url": "node:url"
+  }
+}

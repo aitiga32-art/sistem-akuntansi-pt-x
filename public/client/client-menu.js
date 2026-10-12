@@ -825,7 +825,14 @@
       setAlert(text(menu?.label, 'Menu') + ' belum dikonfigurasi.', 'info');
       return;
     }
-    window.location.assign(url);
+    window.location.assign(resolvePageUrl(url));
+  }
+
+  function resolvePageUrl(url) {
+    if (typeof window.ptxResolvePageUrl === 'function') {
+      return window.ptxResolvePageUrl(url);
+    }
+    return url;
   }
 
   function renderHtiAccurateMenu(list, count, menus) {
@@ -953,7 +960,7 @@
         action.className = 'hti-accurate-detail-action';
         action.innerHTML = '<strong>' + text(child.label, 'Menu') + '</strong><span>' + text(child.description) + '</span>';
         action.addEventListener('click', function () {
-          if (text(child.url)) window.location.assign(child.url);
+          if (text(child.url)) window.location.assign(resolvePageUrl(child.url));
           else setAlert(text(child.label, 'Menu') + ' belum dikonfigurasi.', 'info');
         });
         actions.appendChild(action);
@@ -976,7 +983,7 @@
     card.className = 'client-menu-card';
     if (variant === 'report') card.classList.add('client-menu-card-report');
     if (enabled && hasUrl) {
-      card.href = menuUrl;
+      card.href = resolvePageUrl(menuUrl);
     } else {
       card.type = 'button';
       if (!enabled) {

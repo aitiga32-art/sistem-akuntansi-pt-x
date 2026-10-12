@@ -23,4 +23,6 @@ jobs:
         run: node --check src/server.js
       - name: Check portal route syntax
         run: node --check src/modules/client-portal/routes.js
+      - name: Build GitHub Pages
+        run: npm run build:pages
 
