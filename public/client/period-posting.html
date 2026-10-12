@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tutup Buku - Client Portal</title>
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+</head>
+<body class="client-portal-app">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="periodClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+      <nav class="portal-nav" aria-label="Navigasi utama">
+        <a href="/app/client"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9 9-7 9 7"/><path d="M9 22V12h6v10"/></svg><span>Beranda</span></a>
+        <a href="/app/client/portal"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg><span>Portal Saya</span></a>
+      </nav>
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="periodUserName">-</strong>
+          <span id="periodUserEmail">-</span>
+        </div>
+        <button id="clientLogoutBtn" class="danger-button" type="button">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="periodAlert" class="portal-alert" hidden></div>
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="periodBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Tutup Buku</h1>
+          <p class="portal-subtitle" id="periodSubtitle">Menutup akun nominal ke akun laba berjalan.</p>
+        </div>
+        <button class="portal-refresh" type="button" id="periodRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar" aria-label="Aksi tutup buku">
+        <div class="cashbook-toolbar-actions">
+          <label class="client-period-inline-label" for="periodYearInput">Tahun</label>
+          <input class="sales-search-input period-year-input" id="periodYearInput" type="number" min="2020" max="2099" step="1">
+          <button class="ghost-button cashbook-import-button" type="button" id="periodShowBtn">Tampilkan</button>
+          <button class="submit cashbook-add-button" type="button" id="periodCloseBookBtn">Tutup Buku</button>
+        </div>
+        <div class="client-directory-count" id="periodCount">0 histori</div>
+      </section>
+
+      <section class="cashbook-sheet-panel" aria-label="Histori Tutup Buku">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table period-posting-table">
+            <colgroup>
+              <col class="period-col-month">
+              <col class="period-col-status">
+              <col class="period-col-actor">
+              <col class="period-col-time">
+              <col class="period-col-notes">
+              <col class="period-col-action">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Status</th>
+                <th>Ditutup Oleh</th>
+                <th>Waktu</th>
+                <th>Catatan</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="periodRows">
+              <tr><td colspan="6">Memuat histori tutup buku...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="periodPostingModal" hidden>
+    <section class="portal-modal period-posting-modal" role="dialog" aria-modal="true" aria-labelledby="periodPostingModalTitle">
+      <form id="periodPostingForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="periodPostingModalTitle">Tutup Buku</h2>
+            <span id="periodPostingModalSubtitle">Konfirmasi penutupan buku.</span>
+          </div>
+          <button class="icon-button" type="button" id="periodPostingCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+        <div class="period-posting-modal-body">
+          <div class="period-posting-warning">
+            <strong>Akun nominal akan ditutup.</strong>
+            <span>Sistem akan membuat Jurnal Memorial otomatis: akun pendapatan/biaya ditutup ke akun laba berjalan. Histori terakhir bisa dibatalkan jika diperlukan.</span>
+          </div>
+          <label class="period-posting-note-field" for="periodClosingDate">
+            <span>Tanggal Penutupan</span>
+            <input id="periodClosingDate" type="date" required>
+          </label>
+          <label class="period-posting-note-field" for="periodPostingNotes">
+            <span>Catatan</span>
+            <textarea id="periodPostingNotes" rows="5" maxlength="500" placeholder="Catatan opsional"></textarea>
+          </label>
+        </div>
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="periodPostingCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="periodPostingSubmitBtn">Konfirmasi Tutup Buku</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <script src="/app/assets/client/period-posting.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>

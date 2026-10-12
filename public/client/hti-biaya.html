@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Biaya PT X - Client Portal</title>
+</head>
+<body class="client-portal-app hti-expense-page">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="htiExpenseClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="htiExpenseUserName">-</strong>
+          <span id="htiExpenseUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="htiExpenseAlert" class="portal-alert" hidden></div>
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="htiExpenseBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Biaya</h1>
+          <p class="portal-subtitle" id="htiExpenseSubtitle">Biaya rutin dan biaya proyek PT X</p>
+        </div>
+        <button class="portal-refresh" type="button" id="htiExpenseRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar hti-expense-toolbar" aria-label="Aksi Biaya">
+        <div class="cashbook-toolbar-actions">
+          <button class="submit cashbook-add-button" type="button" id="htiExpenseAddBtn">Tambah Biaya</button>
+          <nav class="hti-book-switcher" data-hti-book-switcher aria-label="Navigasi buku PT X"></nav>
+        </div>
+        <div class="hti-toolbar-filters">
+          <select id="htiExpenseTypeFilter" aria-label="Filter jenis biaya">
+            <option value="">Semua jenis</option>
+            <option value="routine">Biaya rutin</option>
+            <option value="project">Biaya proyek</option>
+          </select>
+          <input class="sales-search-input" id="htiExpenseSearchInput" type="search" placeholder="Cari biaya, proyek, akun" autocomplete="off">
+        </div>
+      </section>
+
+      <section class="hti-expense-workflow" aria-label="Pilih jenis biaya">
+        <button class="hti-expense-workflow-card is-active" type="button" data-expense-mode="routine">
+          <strong>Biaya Rutin</strong>
+          <span>Operasional umum non-HPP</span>
+        </button>
+        <button class="hti-expense-workflow-card" type="button" data-expense-mode="project">
+          <strong>Biaya Proyek</strong>
+          <span>Masuk HPP dan Buku Kontrol</span>
+        </button>
+      </section>
+
+      <section class="hti-expense-summary" aria-label="Ringkasan biaya">
+        <div><span>Total Biaya</span><strong id="htiExpenseTotal">0</strong></div>
+        <div><span>Biaya Rutin</span><strong id="htiExpenseRoutineTotal">0</strong></div>
+        <div><span>Biaya Proyek</span><strong id="htiExpenseProjectTotal">0</strong></div>
+        <div><span>Tanpa Kode</span><strong id="htiExpenseUnallocatedCount">0</strong></div>
+      </section>
+
+      <section class="cashbook-sheet-panel hti-expense-sheet" aria-label="Tabel Biaya">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table hti-purchase-table hti-expense-table">
+            <thead>
+              <tr>
+                <th>Jenis</th>
+                <th>Tanggal</th>
+                <th>Kode Proyek</th>
+                <th>Akun Biaya</th>
+                <th>Keterangan</th>
+                <th>Sumber Dana</th>
+                <th>Nominal</th>
+                <th>Dokumen</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="htiExpenseRows">
+              <tr><td colspan="9">Memuat data biaya...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiExpenseModal" hidden>
+    <section class="portal-modal hti-expense-modal" role="dialog" aria-modal="true" aria-labelledby="htiExpenseModalTitle">
+      <form id="htiExpenseForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="htiExpenseModalTitle">Tambah Biaya</h2>
+            <span id="htiExpenseModalMeta">Input biaya melalui workflow resmi.</span>
+          </div>
+          <button class="icon-button" type="button" id="htiExpenseCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+        <input id="htiExpenseEntryId" type="hidden">
+        <div class="hti-expense-form-grid">
+          <label class="form-field">
+            <span>Jenis Biaya</span>
+            <select id="htiExpenseType" required>
+              <option value="routine">Biaya Rutin</option>
+              <option value="project">Biaya Proyek</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Tanggal</span>
+            <input id="htiExpenseDate" type="date" required>
+          </label>
+          <label class="form-field">
+            <span>Sumber Dana</span>
+            <select id="htiExpenseSource" required></select>
+          </label>
+          <label class="form-field">
+            <span>Nominal</span>
+            <input id="htiExpenseAmount" type="text" inputmode="decimal" data-rupiah="true" placeholder="0" required>
+          </label>
+          <label class="form-field hti-expense-project-field">
+            <span>Kode Proyek <small>(boleh kosong)</small></span>
+            <input id="htiExpenseProject" type="text" list="htiExpenseProjectOptions" autocomplete="off" placeholder="Contoh: 12">
+          </label>
+          <label class="form-field">
+            <span>Akun Biaya</span>
+            <select id="htiExpenseAccount" required></select>
+            <input id="htiExpenseProjectAccountLock" type="text" value="5201 - BIAYA PROYEK" disabled hidden>
+          </label>
+          <label class="form-field full">
+            <span>Keterangan</span>
+            <textarea id="htiExpenseDescription" rows="2" placeholder="Opsional"></textarea>
+          </label>
+        </div>
+        <div class="hti-expense-attachment">
+          <div>
+            <strong>Dokumen</strong>
+            <small id="htiExpenseAttachmentNote">Belum ada file tersimpan.</small>
+          </div>
+          <input id="htiExpenseAttachmentFile" type="file" multiple>
+        </div>
+        <datalist id="htiExpenseProjectOptions"></datalist>
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="htiExpenseCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="htiExpenseSaveBtn">Simpan Biaya</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiExpenseViewModal" hidden>
+    <section class="portal-modal hti-expense-view-modal" role="dialog" aria-modal="true" aria-labelledby="htiExpenseViewTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="htiExpenseViewTitle">Detail Biaya</h2>
+          <span id="htiExpenseViewMeta">Tampilan hanya lihat.</span>
+        </div>
+        <button class="icon-button" type="button" id="htiExpenseViewCloseBtn" aria-label="Tutup detail">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div id="htiExpenseViewBody" class="hti-expense-view-body"></div>
+      <footer class="portal-modal-footer">
+        <button class="danger-button" type="button" id="htiExpenseViewDeleteBtn">Hapus</button>
+        <button class="ghost-button" type="button" id="htiExpenseViewEditBtn">Ubah</button>
+        <button class="ghost-button" type="button" id="htiExpenseViewCancelBtn">Tutup</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiExpenseFileModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="htiExpenseFileTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="htiExpenseFileTitle">Dokumen Biaya</h2>
+          <span id="htiExpenseFileMeta">Memuat dokumen...</span>
+        </div>
+        <button class="icon-button" type="button" id="htiExpenseFileCloseBtn" aria-label="Tutup dokumen">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="cashbook-file-viewer" id="htiExpenseFileViewer"></div>
+    </section>
+  </div>
+
+  <script src="/app/assets/client/client-unsaved-guard.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-keyboard-nav.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/hti-biaya.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/hti-book-nav.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>

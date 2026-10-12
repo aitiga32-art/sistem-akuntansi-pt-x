@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Neraca Lajur - Client Portal</title>
+</head>
+<body class="client-portal-app">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="neracaLajurClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="neracaLajurUserName">-</strong>
+          <span id="neracaLajurUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="neracaLajurAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="neracaLajurBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Neraca Lajur</h1>
+          <p class="portal-subtitle" id="neracaLajurSubtitle">Memuat summary Buku Besar...</p>
+        </div>
+        <button class="portal-refresh" type="button" id="neracaLajurRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar" aria-label="Aksi Neraca Lajur">
+        <div class="cashbook-toolbar-actions">
+          <button class="ghost-button cashbook-import-button" type="button" id="neracaLajurCoaBtn">Ubah COA</button>
+          <button class="submit cashbook-add-button" type="button" id="neracaLajurOpeningBtn">Saldo/Ket: Terkunci</button>
+          <input class="sales-search-input" id="neracaLajurSearchInput" type="search" placeholder="Cari COA / nama akun" autocomplete="off" aria-label="Cari Neraca Lajur">
+        </div>
+      </section>
+
+      <section class="cashbook-sheet-panel" aria-label="Tabel Neraca Lajur">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table trial-balance-table" data-client-resizable-disabled="true">
+            <colgroup>
+              <col class="trial-col-coa">
+              <col class="trial-col-account">
+              <col class="trial-col-opening">
+              <col class="trial-col-opening">
+              <col class="trial-col-mutation">
+              <col class="trial-col-mutation">
+              <col class="trial-col-ending">
+              <col class="trial-col-ending">
+              <col class="trial-col-notes">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="trial-head-coa" rowspan="2">COA</th>
+                <th class="trial-head-account" rowspan="2">Nama Akun</th>
+                <th class="trial-balance-group-head trial-head-opening" colspan="2">Saldo Awal</th>
+                <th class="trial-head-mutation" rowspan="2">Mutasi Debit</th>
+                <th class="trial-head-mutation" rowspan="2">Mutasi Kredit</th>
+                <th class="trial-balance-group-head trial-head-ending" colspan="2">Saldo Akhir</th>
+                <th class="trial-head-notes" rowspan="2">Keterangan</th>
+              </tr>
+              <tr class="trial-balance-subhead-row">
+                <th>Debit</th>
+                <th>Kredit</th>
+                <th>Debit</th>
+                <th>Kredit</th>
+              </tr>
+            </thead>
+            <tbody id="neracaLajurRows">
+              <tr><td colspan="9">Memuat Neraca Lajur...</td></tr>
+            </tbody>
+            <tfoot class="trial-balance-totals-row">
+              <tr>
+                <td colspan="2">TOTAL</td>
+                <td class="number" id="neracaLajurOpeningDebitFoot">0</td>
+                <td class="number" id="neracaLajurOpeningCreditFoot">0</td>
+                <td class="number" id="neracaLajurMutationDebitFoot">0</td>
+                <td class="number" id="neracaLajurMutationCreditFoot">0</td>
+                <td class="number" id="neracaLajurEndingDebitFoot">0</td>
+                <td class="number" id="neracaLajurEndingCreditFoot">0</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="neracaLajurCoaModal" hidden>
+    <section class="portal-modal" role="dialog" aria-modal="true" aria-labelledby="neracaLajurCoaTitle">
+      <form id="neracaLajurCoaForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="neracaLajurCoaTitle">Ubah COA</h2>
+            <span>Pilih COA lama, lalu isi kode dan nama akun terbaru.</span>
+          </div>
+          <button class="icon-button" type="button" id="neracaLajurCoaCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+        <div class="cashbook-form-grid">
+          <label class="form-field full">
+            <span>COA Lama</span>
+            <select id="neracaLajurOldCoa" required></select>
+          </label>
+          <label class="form-field">
+            <span>COA Baru</span>
+            <input id="neracaLajurNewCoa" type="text" required autocomplete="off">
+          </label>
+          <label class="form-field">
+            <span>Nama Akun</span>
+            <input id="neracaLajurCoaName" type="text" required autocomplete="off">
+          </label>
+        </div>
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="neracaLajurCoaCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="neracaLajurCoaSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <script src="/app/assets/client/client-period.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/neraca-lajur.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>
+

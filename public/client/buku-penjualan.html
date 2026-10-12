@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Buku Penjualan - Client Portal</title>
+</head>
+<body class="client-portal-app">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="salesClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="salesUserName">-</strong>
+          <span id="salesUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="salesAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="salesBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Buku Penjualan</h1>
+          <p class="portal-subtitle" id="salesSubtitle">Memuat data Buku Penjualan...</p>
+        </div>
+        <div class="sales-stock-warning" id="salesStockWarning" hidden></div>
+        <button class="portal-refresh" type="button" id="salesRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar sales-compact-toolbar" aria-label="Aksi Buku Penjualan">
+        <div class="cashbook-toolbar-actions">
+          <button class="submit cashbook-add-button" type="button" id="salesAddBtn">Tambah Data</button>
+          <div class="sales-search-control">
+            <input class="sales-search-input" id="salesSearchInput" type="search" placeholder="Cari data penjualan" autocomplete="off">
+            <button class="ghost-button sales-search-button" type="button" id="salesSearchBtn" aria-label="Cari data penjualan">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            </button>
+          </div>
+          <button class="ghost-button cashbook-import-button sales-delete-selected-button" type="button" id="salesDeleteSelectedBtn" disabled>Hapus Terpilih</button>
+          <button class="ghost-button cashbook-import-button" type="button" id="salesExportBtn" hidden>Ekspor Data</button>
+        </div>
+        <div class="client-directory-count" id="salesCount">0 data</div>
+      </section>
+
+      <section class="cashbook-sheet-panel" aria-label="Tabel Buku Penjualan">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table sales-table">
+            <thead>
+              <tr>
+                <th class="sales-select-head"><input id="salesSelectAll" class="sales-row-checkbox" type="checkbox" aria-label="Pilih semua data tampil"></th>
+                <th class="client-entity-column">Entitas</th>
+                <th>No Kwitansi / Invoice</th>
+                <th>No Faktur</th>
+                <th>Status</th>
+                <th>Tanggal</th>
+                <th>Nama Barang</th>
+                <th>Nama Customer</th>
+                <th data-sales-total-key="hargaPricelist"><span class="sales-head-label">Harga Satuan</span><span class="sales-head-total"></span></th>
+                <th data-sales-column="quantityOrDiscount" data-sales-total-key="quantity"><span class="sales-head-label">Qty</span><span class="sales-head-total"></span></th>
+                <th data-sales-total-key="hargaSetelahDisc"><span class="sales-head-label">Jumlah Barang</span><span class="sales-head-total"></span></th>
+                <th class="sales-mbarep-hidden-column" data-sales-total-key="jumlahDp"><span class="sales-head-label">Jumlah DP</span><span class="sales-head-total"></span></th>
+                <th class="sales-mbarep-hidden-column" data-sales-total-key="bbnNotice"><span class="sales-head-label">BBN Notice</span><span class="sales-head-total"></span></th>
+                <th class="sales-mbarep-hidden-column" data-sales-total-key="nilaiPenyerahanPajak"><span class="sales-head-label">Nilai Penyerahan Pajak</span><span class="sales-head-total"></span></th>
+                <th class="sales-mbarep-hidden-column" data-sales-total-key="dpp"><span class="sales-head-label">DPP</span><span class="sales-head-total"></span></th>
+                <th class="sales-mbarep-hidden-column" data-sales-total-key="ppn"><span class="sales-head-label">PPN</span><span class="sales-head-total"></span></th>
+                <th class="sales-mbarep-hidden-column" data-sales-total-key="dppPpn"><span class="sales-head-label">DPP + PPN</span><span class="sales-head-total"></span></th>
+                <th class="sales-mbarep-hidden-column" data-sales-total-key="bbnUnnotice"><span class="sales-head-label">BBN Unnotice</span><span class="sales-head-total"></span></th>
+                <th data-sales-total-key="totalTagihan"><span class="sales-head-label">Total Tagihan</span><span class="sales-head-total"></span></th>
+                <th data-sales-total-key="sisaPiutang"><span class="sales-head-label">Sisa Piutang</span><span class="sales-head-total"></span></th>
+                <th>Catatan</th>
+              </tr>
+            </thead>
+            <tbody id="salesRows">
+              <tr><td colspan="21">Memuat Buku Penjualan...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="salesTypeModal" hidden>
+    <section class="portal-modal sales-type-modal" role="dialog" aria-modal="true" aria-labelledby="salesTypeTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="salesTypeTitle">Pilih Input Penjualan</h2>
+          <span>Pilih jenis transaksi penjualan.</span>
+        </div>
+        <button class="icon-button" type="button" id="salesTypeCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="sales-type-grid">
+        <button class="sales-type-card" type="button" data-sales-type="dp">
+          <strong>DP</strong>
+          <span>Input uang muka kendaraan.</span>
+        </button>
+        <button class="sales-type-card" type="button" data-sales-type="pelunasan">
+          <strong>Pelunasan</strong>
+          <span>Lunasi transaksi dari data DP.</span>
+        </button>
+        <button class="sales-type-card" type="button" data-sales-type="lengkap">
+          <strong>Lengkap</strong>
+          <span>Input penjualan langsung lunas.</span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="salesDpModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="salesDpTitle">
+      <form id="salesDpForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="salesDpTitle">Input DP</h2>
+            <span id="salesDpMeta">No kwitansi otomatis berdasarkan tanggal.</span>
+          </div>
+          <button class="icon-button" type="button" id="salesDpCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <div class="sales-form">
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>No Kwitansi</span>
+              <input id="salesReceiptNo" type="text" readonly>
+            </label>
+            <label class="sales-line">
+              <span>Tanggal</span>
+              <input id="salesTanggal" type="date" required>
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>Nama Customer</span>
+              <input id="salesNamaCustomer" type="text" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>NIK/NPWP</span>
+              <input id="salesNikNpwp" type="text" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>Alamat</span>
+              <input id="salesAlamat" type="text" autocomplete="off">
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line sales-persada-vehicle-select">
+              <span>Pilih No.Rangka / Mesin</span>
+              <input id="salesInventoryVehicleSelect" type="text" list="salesInventoryFrameOptions" autocomplete="off" placeholder="Ketik / pilih dari Buku Persediaan">
+            </label>
+            <label class="sales-line">
+              <span>No.Rangka</span>
+              <input id="salesNoRangka" type="text" list="salesInventoryFrameOptions" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>Type Motor</span>
+              <input id="salesTipeMotor" type="text" list="salesInventoryTypeOptions" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>No.Mesin</span>
+              <input id="salesNoMesin" type="text" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>Warna</span>
+              <input id="salesWarna" type="text" list="salesInventoryColorOptions" autocomplete="off">
+            </label>
+            <datalist id="salesInventoryFrameOptions"></datalist>
+            <datalist id="salesInventoryTypeOptions"></datalist>
+            <datalist id="salesInventoryColorOptions"></datalist>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>1. Harga Pricelist</span>
+              <input id="salesHargaPricelist" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line">
+              <span>2. Disc</span>
+              <input id="salesDisc" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line strong">
+              <span>3. Harga Setelah Disc</span>
+              <input id="salesHargaSetelahDisc" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section compact">
+            <label class="sales-line">
+              <span>7. BBN Notice</span>
+              <input id="salesBbnNotice" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line strong">
+              <span>8. Nilai Penyerahan Pajak</span>
+              <input id="salesNilaiPenyerahanPajak" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section compact">
+            <label class="sales-line">
+              <span>9. BBN Unnotice</span>
+              <input id="salesBbnUnnotice" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>10. DPP</span>
+              <input id="salesDpp" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line">
+              <span>11. PPN</span>
+              <input id="salesPpn" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line">
+              <span>12. DPP + PPN</span>
+              <input id="salesDppPpn" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>4. DP Customer</span>
+              <input id="salesDpCustomer" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line">
+              <span>5. DP Tambahan</span>
+              <input id="salesDpTambahan" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line strong">
+              <span>6. Jumlah DP</span>
+              <input id="salesJumlahDp" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>Catatan</span>
+              <input id="salesCatatan" type="text" autocomplete="off">
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line file-line">
+              <span>Upload File DP</span>
+              <input id="salesDpAttachmentFile" type="file" multiple>
+            </label>
+            <small class="cashbook-file-note" id="salesDpAttachmentNote">Belum ada file dipilih.</small>
+          </div>
+        </div>
+
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="salesDpCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="salesDpSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="salesPelunasanModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="salesPelunasanTitle">
+      <form id="salesPelunasanForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="salesPelunasanTitle">Pelunasan</h2>
+            <span id="salesPelunasanMeta">Pilih DP dari No Kwitansi, lalu lengkapi data invoice.</span>
+          </div>
+          <button class="icon-button" type="button" id="salesPelunasanCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <div class="purchase-form-grid purchase-settlement-grid sales-mbarep-settlement-grid" id="salesMbarepSettlementGrid" hidden>
+          <label class="form-field">
+            <span>Tanggal Pelunasan</span>
+            <input id="salesPelunasanSimpleDate" type="date" required disabled>
+          </label>
+          <label class="form-field">
+            <span>Nilai Pelunasan</span>
+            <input id="salesPelunasanSimpleAmount" type="text" inputmode="decimal" data-rupiah="true" autocomplete="off" required disabled>
+          </label>
+          <label class="form-field" hidden>
+            <span>Sumber Utama</span>
+            <select id="salesPelunasanSimpleSource" disabled>
+              <option value="">Pilih kas/bank</option>
+            </select>
+          </label>
+          <label class="form-field full">
+            <span>Keterangan</span>
+            <input id="salesPelunasanSimpleNotes" type="text" autocomplete="off" disabled>
+          </label>
+          <div class="form-field full sales-payment-sources-panel">
+            <div class="sales-payment-sources-heading">
+              <span>Rincian Sumber Pelunasan</span>
+              <button class="ghost-button small" type="button" id="salesPelunasanSimpleAddPaymentBtn" disabled>Tambah Sumber</button>
+            </div>
+            <div class="sales-payment-source-list" id="salesPelunasanSimplePayments"></div>
+            <small class="cashbook-file-note" id="salesPelunasanSimplePaymentsTotal">Total sumber: 0</small>
+          </div>
+        </div>
+
+        <div class="sales-form sales-legacy-settlement-form" id="salesLegacySettlementForm">
+          <h3 class="sales-form-heading">PELUNASAN</h3>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>No Kwitansi</span>
+              <input id="salesPelunasanDpSelect" type="text" list="salesPelunasanDpOptions" placeholder="Ketik / pilih No Kwitansi DP" autocomplete="off" required>
+              <datalist id="salesPelunasanDpOptions"></datalist>
+            </label>
+            <label class="sales-line">
+              <span>Tanggal Kwitansi</span>
+              <input id="salesPelunasanTanggalKwitansi" type="text" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>No. Invoice</span>
+              <input id="salesPelunasanNoInvoice" type="text" readonly>
+            </label>
+            <label class="sales-line">
+              <span>Tanggal Invoice</span>
+              <input id="salesPelunasanTanggalInvoice" type="date" required>
+            </label>
+            <label class="sales-line">
+              <span>Nama Customer</span>
+              <input id="salesPelunasanNamaCustomer" type="text" readonly>
+            </label>
+            <label class="sales-line">
+              <span>NIK/NPWP</span>
+              <input id="salesPelunasanNikNpwp" type="text" readonly>
+            </label>
+            <label class="sales-line">
+              <span>Alamat</span>
+              <input id="salesPelunasanAlamat" type="text" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>No.Rangka</span>
+              <input id="salesPelunasanNoRangka" type="text" readonly>
+            </label>
+            <label class="sales-line">
+              <span>Type Motor</span>
+              <input id="salesPelunasanTipeMotor" type="text" readonly>
+            </label>
+            <label class="sales-line">
+              <span>No.Mesin</span>
+              <input id="salesPelunasanNoMesin" type="text" readonly>
+            </label>
+            <label class="sales-line">
+              <span>Warna</span>
+              <input id="salesPelunasanWarna" type="text" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>1. Harga Pricelist</span>
+              <input id="salesPelunasanHargaPricelist" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line">
+              <span>2. Disc</span>
+              <input id="salesPelunasanDisc" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line">
+              <span>3. Disc Tambahan</span>
+              <input id="salesPelunasanDiscTambahan" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line strong">
+              <span>4. Harga Setelah Disc</span>
+              <input id="salesPelunasanHargaSetelahDisc" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section compact">
+            <label class="sales-line">
+              <span>5. DP yang telah dibayarkan</span>
+              <input id="salesPelunasanDpPaid" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section compact">
+            <label class="sales-line">
+              <span>6. BBN Notice</span>
+              <input id="salesPelunasanBbnNotice" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line strong">
+              <span>7. Nilai Pelunasan Pajak</span>
+              <input id="salesPelunasanNilaiPajak" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>8. DPP Pelunasan</span>
+              <input id="salesPelunasanDpp" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line">
+              <span>9. PPN Pelunasan</span>
+              <input id="salesPelunasanPpn" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line">
+              <span>10. DPP + PPN Pelunasan</span>
+              <input id="salesPelunasanDppPpn" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line sales-source-fallback" hidden>
+              <span>Sumber Utama</span>
+              <select id="salesPelunasanSource">
+                <option value="kas:kas-besar">Kas 2</option>
+              </select>
+            </label>
+            <div class="sales-payment-sources-panel">
+              <div class="sales-payment-sources-heading">
+                <span>Sumber Pelunasan</span>
+                <button class="ghost-button small" type="button" id="salesPelunasanAddPaymentBtn">Tambah Sumber</button>
+              </div>
+              <div class="sales-payment-source-list" id="salesPelunasanPayments"></div>
+              <small class="cashbook-file-note" id="salesPelunasanPaymentsTotal">Total sumber: 0</small>
+            </div>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line file-line">
+              <span>Upload File Pelunasan</span>
+              <input id="salesPelunasanAttachmentFile" type="file" multiple>
+            </label>
+            <small class="cashbook-file-note" id="salesPelunasanAttachmentNote">Belum ada file dipilih.</small>
+          </div>
+        </div>
+
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="salesPelunasanCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="salesPelunasanSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="salesFakturModal" hidden>
+    <section class="portal-modal" role="dialog" aria-modal="true" aria-labelledby="salesFakturTitle">
+      <form id="salesFakturForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="salesFakturTitle">Input Faktur</h2>
+            <span id="salesFakturMeta">Lengkapi nomor dan tanggal faktur.</span>
+          </div>
+          <button class="icon-button" type="button" id="salesFakturCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+        <div class="sales-form">
+          <div class="sales-form-section">
+            <input id="salesFakturDpEntryId" type="hidden">
+            <label class="sales-line">
+              <span>No Faktur</span>
+              <input id="salesFakturNo" type="text" autocomplete="off" required>
+            </label>
+            <label class="sales-line">
+              <span>Tanggal Faktur</span>
+              <input id="salesFakturTanggal" type="date" required>
+            </label>
+            <label class="sales-line file-line">
+              <span>Upload Faktur</span>
+              <input id="salesFakturAttachmentFile" type="file" multiple>
+            </label>
+            <small class="cashbook-file-note" id="salesFakturAttachmentNote">Belum ada file dipilih.</small>
+          </div>
+        </div>
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="salesFakturCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="salesFakturSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="salesLengkapModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="salesLengkapTitle">
+      <form id="salesLengkapForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="salesLengkapTitle">Tambah Penjualan</h2>
+            <span>Input transaksi penjualan.</span>
+          </div>
+          <button class="icon-button" type="button" id="salesLengkapCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+        <div class="purchase-form-grid purchase-step-grid sales-entity-gate-grid" id="salesLengkapEntityGateGrid">
+          <label class="form-field purchase-entity-gate-field" id="salesLengkapEntityGateField">
+            <span>Entitas</span>
+            <select id="salesLengkapEntityGateSelect" required>
+              <option value="">Pilih entitas</option>
+            </select>
+          </label>
+        </div>
+        <div class="sales-form" id="salesLengkapDetails" hidden>
+          <h3 class="sales-form-heading">PENJUALAN</h3>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>No Kwitansi</span>
+              <input id="salesLengkapReceiptNo" type="text" readonly>
+            </label>
+            <label class="sales-line">
+              <span>Tanggal Kwitansi</span>
+              <input id="salesLengkapTanggal" type="date" required>
+            </label>
+          </div>
+
+          <div class="sales-form-section sales-persada-lengkap-section">
+            <label class="sales-line sales-persada-vehicle-select">
+              <span>Pilih No.Rangka / Mesin</span>
+              <input id="salesLengkapInventoryVehicleSelect" type="text" list="salesInventoryFrameOptions" autocomplete="off" placeholder="Ketik / pilih dari Buku Persediaan">
+            </label>
+            <label class="sales-line">
+              <span>No.Rangka</span>
+              <input id="salesLengkapNoRangka" type="text" list="salesInventoryFrameOptions" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>Type Motor</span>
+              <input id="salesLengkapTipeMotor" type="text" autocomplete="off" readonly>
+            </label>
+            <label class="sales-line">
+              <span>No.Mesin</span>
+              <input id="salesLengkapNoMesin" type="text" autocomplete="off" readonly>
+            </label>
+            <label class="sales-line">
+              <span>Warna</span>
+              <input id="salesLengkapWarna" type="text" autocomplete="off" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>No. Invoice</span>
+              <input id="salesLengkapNoInvoice" type="text" readonly>
+            </label>
+            <label class="sales-line">
+              <span>Tanggal Invoice</span>
+              <input id="salesLengkapTanggalInvoice" type="date" required>
+            </label>
+            <label class="sales-line">
+              <span>Nama Customer</span>
+              <input id="salesLengkapNamaCustomer" type="text" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>NIK/NPWP</span>
+              <input id="salesLengkapNikNpwp" type="text" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>Alamat</span>
+              <input id="salesLengkapAlamat" type="text" autocomplete="off">
+            </label>
+          </div>
+
+          <div class="sales-form-section sales-persada-lengkap-section">
+            <label class="sales-line">
+              <span>1. Harga Pricelist</span>
+              <input id="salesLengkapHargaPricelist" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line">
+              <span>2. Disc</span>
+              <input id="salesLengkapDisc" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line strong">
+              <span>3. Harga Setelah Disc</span>
+              <input id="salesLengkapHargaSetelahDisc" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section compact sales-persada-lengkap-section">
+            <label class="sales-line">
+              <span>4. BBN Notice</span>
+              <input id="salesLengkapBbnNotice" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+            <label class="sales-line strong">
+              <span>5. Nilai Penyerahan Pajak</span>
+              <input id="salesLengkapNilaiPajak" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <div class="sales-form-section sales-persada-lengkap-section">
+            <label class="sales-line">
+              <span>6. DPP</span>
+              <input id="salesLengkapDpp" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line">
+              <span>7. PPN</span>
+              <input id="salesLengkapPpn" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line">
+              <span>8. DPP + PPN</span>
+              <input id="salesLengkapDppPpn" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line strong">
+              <span>9. Total Tagihan</span>
+              <input id="salesLengkapTotalTagihan" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+
+          <section class="purchase-items-section" aria-label="Rincian barang penjualan">
+            <header class="purchase-items-header">
+              <div>
+                <h3>Rincian Barang</h3>
+                <span id="salesLengkapItemsSummary">0 barang</span>
+              </div>
+              <button class="ghost-button purchase-add-item-button" type="button" id="salesLengkapAddItemBtn">Tambah Barang</button>
+            </header>
+            <div class="sales-items-table">
+              <div class="sales-items-table-head" aria-hidden="true">
+                <span>No</span>
+                <span>Nama Barang</span>
+                <span>Qty</span>
+                <span>Harga Satuan</span>
+                <span>Jumlah</span>
+                <span></span>
+              </div>
+              <div class="purchase-items-list sales-items-list" id="salesLengkapItemsList"></div>
+            </div>
+          </section>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>Catatan</span>
+              <input id="salesLengkapCatatan" type="text" autocomplete="off">
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line file-line">
+              <span>Upload File Penjualan</span>
+              <input id="salesLengkapAttachmentFile" type="file" multiple>
+            </label>
+            <small class="cashbook-file-note" id="salesLengkapAttachmentNote">Belum ada file dipilih.</small>
+          </div>
+        </div>
+        <footer class="portal-modal-footer" id="salesLengkapFooter" hidden>
+          <button class="ghost-button" type="button" id="salesLengkapCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="salesLengkapSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="salesDetailModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="salesDetailTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="salesDetailTitle">Detail Buku Penjualan</h2>
+          <span id="salesDetailMeta">Rincian input DP dan Pelunasan.</span>
+        </div>
+        <button class="icon-button" type="button" id="salesDetailCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="sales-detail" id="salesDetailContent"></div>
+      <footer class="portal-modal-footer sales-detail-footer">
+        <button class="ghost-button" type="button" id="salesDetailDoneBtn">Tutup</button>
+        <div class="sales-detail-actions" id="salesDetailActions"></div>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="salesFileModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="salesFileTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="salesFileTitle">Lihat File</h2>
+          <span id="salesFileMeta">Memuat file...</span>
+        </div>
+        <button class="icon-button" type="button" id="salesFileCloseBtn" aria-label="Tutup popup file">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="sales-file-tabs" id="salesFileTabs"></div>
+      <div class="cashbook-file-viewer" id="salesFileViewer"></div>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="salesSearchDpModal" hidden>
+    <section class="portal-modal" role="dialog" aria-modal="true" aria-labelledby="salesSearchDpTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="salesSearchDpTitle">Pelunasan</h2>
+          <span>Pilih data DP.</span>
+        </div>
+        <button class="icon-button" type="button" id="salesSearchDpCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="sales-search-panel">
+        <input id="salesDpSearch" type="search" placeholder="Cari no kwitansi / customer / no rangka">
+        <div id="salesDpSearchRows" class="sales-search-results"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/app/assets/vendor/xlsx/xlsx.full.min.js" defer></script>
+  <script src="/app/assets/client/client-period.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-upload-qr.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/buku-penjualan.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>

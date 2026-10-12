@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="64" viewBox="0 0 240 64" role="img" aria-labelledby="title">
+  <title id="title">PT X</title>
+  <rect width="64" height="64" rx="10" fill="#b91c1c"/>
+  <path d="M20 17h9l7 10 7-10h9L40.5 32 52 47h-9l-7-10-7 10h-9l11.5-15L20 17Z" fill="#fff"/>
+  <text x="82" y="42" fill="#172033" font-family="Arial, sans-serif" font-size="30" font-weight="700">PT X</text>
+</svg>

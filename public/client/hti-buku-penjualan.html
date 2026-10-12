@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+    <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Buku Penjualan PT X - Client Portal</title>
+</head>
+<body class="client-portal-app hti-sales-page">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="htiClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="htiUserName">-</strong>
+          <span id="htiUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="htiAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="htiBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Buku Penjualan</h1>
+          <p class="portal-subtitle" id="htiSubtitle">Memuat buku penjualan...</p>
+        </div>
+        <button class="portal-refresh" type="button" id="htiRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar hti-purchase-toolbar" aria-label="Aksi Buku Penjualan">
+        <div class="cashbook-toolbar-actions">
+          <button class="submit cashbook-add-button" type="button" id="htiAddBtn">Tambah Data</button>
+          <button class="ghost-button" type="button" id="htiExportBtn">Ekspor Data</button>
+          <button class="ghost-button" type="button" id="htiBookJournalBtn">Lihat Jurnal</button>
+          <button class="ghost-button hti-advance-button" type="button" id="htiAdvanceBtn">Input Uang Muka</button>
+          <nav class="hti-book-switcher" data-hti-book-switcher aria-label="Navigasi buku PT X"></nav>
+        </div>
+        <div class="hti-toolbar-filters">
+          <label class="sr-only" for="htiProjectFilter">Filter proyek</label>
+          <select id="htiProjectFilter" aria-label="Filter proyek">
+            <option value="">Semua proyek</option>
+          </select>
+          <label class="sr-only" for="htiStatusFilter">Filter status</label>
+          <select id="htiStatusFilter" aria-label="Filter status">
+            <option value="">Semua status</option>
+            <option value="incomplete">Perlu dilengkapi</option>
+            <option value="unpaid">Belum bayar</option>
+            <option value="partial">Bayar sebagian</option>
+            <option value="paid">Lunas</option>
+          </select>
+          <label class="sr-only" for="htiDocumentFilter">Filter jenis dokumen</label>
+          <select id="htiDocumentFilter" aria-label="Filter jenis dokumen">
+            <option value="">Semua dokumen</option>
+            <option value="faktur">Faktur</option>
+            <option value="proforma">Pre Order</option>
+          </select>
+          <label class="sr-only" for="htiSearchInput">Cari transaksi</label>
+          <input class="sales-search-input" id="htiSearchInput" type="search" placeholder="Cari proyek, customer, dokumen" autocomplete="off">
+        </div>
+      </section>
+
+      <section class="cashbook-sheet-panel hti-purchase-sheet hti-sales-sheet" aria-label="Tabel Buku Penjualan">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table hti-purchase-table hti-sales-table" id="htiSalesTable" aria-label="Buku Penjualan PT X">
+            <thead>
+              <tr>
+                <th data-hti-sort-key="projectNo">Kode Project</th>
+                <th data-hti-sort-key="date">Tanggal</th>
+                <th data-hti-sort-key="customerName">Nama Pembeli</th>
+                <th data-hti-sort-key="dpp">DPP</th>
+                <th data-hti-sort-key="ppn">PPN</th>
+                <th data-hti-sort-key="totalAmount">Jumlah Tagihan</th>
+                <th data-hti-sort-key="paymentAmount">Jumlah Terbayar</th>
+                <th data-hti-sort-key="outstanding">Sisa Tagihan</th>
+                <th data-hti-sort-key="payAction">Bayar</th>
+                <th data-hti-sort-key="documents">Dokumen</th>
+              </tr>
+            </thead>
+            <tbody id="htiRows">
+              <tr><td colspan="10">Memuat Buku Penjualan...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiEntryModal" hidden>
+    <section class="portal-modal portal-modal-wide hti-entry-modal" role="dialog" aria-modal="true" aria-labelledby="htiEntryModalTitle">
+      <form id="htiEntryForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="htiEntryModalTitle">Tambah Penjualan</h2>
+            <span id="htiEntryModalMeta">Transaksi penjualan PT X</span>
+          </div>
+          <div class="hti-entry-header-actions">
+            <button class="icon-button hti-entry-size-button" type="button" id="htiEntrySizeDecreaseBtn" aria-label="Kecilkan form" title="Kecilkan form">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
+            </button>
+            <button class="icon-button hti-entry-size-button" type="button" id="htiEntrySizeIncreaseBtn" aria-label="Besarkan form" title="Besarkan form">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            </button>
+            <button class="icon-button" type="button" id="htiEntryCloseBtn" aria-label="Tutup popup">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <input type="hidden" id="htiEntryId">
+        <div class="hti-form-body hti-excel-entry-body">
+          <section class="hti-office-header-grid" aria-label="Info utama penjualan">
+            <label class="form-field">
+              <span>Kode Customer</span>
+              <input id="htiSupplierNpwp" type="text" list="htiSupplierCodeOptions" autocomplete="off" placeholder="Kode customer">
+            </label>
+            <label class="form-field">
+              <span class="hti-header-label-row"><span>Nama Customer</span><span class="hti-advance-balance" id="htiAdvanceBalance" aria-live="polite" hidden><span>Uang muka</span><strong id="htiAdvanceBalanceValue">Rp0</strong><small id="htiAdvanceBalanceMeta"></small></span></span>
+              <input id="htiSupplierName" type="text" list="htiSupplierNameOptions" autocomplete="off" placeholder="Nama customer" required>
+            </label>
+            <label class="form-field">
+              <span>NPWP/NIK</span>
+              <input id="htiCustomerNpwp" type="text" autocomplete="off" placeholder="NPWP / NIK customer">
+            </label>
+            <label class="form-field">
+              <span>Alamat</span>
+              <input id="htiCustomerAddress" type="text" autocomplete="off" placeholder="Alamat customer">
+            </label>
+            <label class="form-field">
+              <span>Jenis Dokumen</span>
+              <select id="htiDocumentType">
+                <option value="faktur">Faktur Penjualan</option>
+                <option value="proforma">Pre Order</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>No Invoice</span>
+              <input id="htiInvoiceNo" type="text" autocomplete="off" placeholder="Otomatis saat simpan, contoh 26VII025">
+            </label>
+            <label class="form-field">
+              <span>Tanggal Invoice</span>
+              <div class="hti-date-field">
+                <input id="htiInvoiceDate" type="text" placeholder="DD/MM/YYYY" autocomplete="off">
+                <input id="htiInvoiceDatePicker" class="hti-date-picker-native" type="date" aria-label="Pilih tanggal invoice">
+              </div>
+            </label>
+            <label class="form-field">
+              <span>No Faktur</span>
+              <input id="htiFakturNo" type="text" autocomplete="off" placeholder="Nomor faktur pajak penjualan">
+            </label>
+            <label class="form-field">
+              <span>Tanggal Faktur</span>
+              <div class="hti-date-field">
+                <input id="htiFakturDate" type="text" placeholder="DD/MM/YYYY" autocomplete="off">
+                <input id="htiFakturDatePicker" class="hti-date-picker-native" type="date" aria-label="Pilih tanggal faktur">
+              </div>
+            </label>
+            <label class="form-field supplier-wide">
+              <span>FP Pembelian</span>
+              <input id="htiFpPurchaseNo" type="text" autocomplete="off" placeholder="Nomor FP pembelian terkait">
+            </label>
+            <label class="form-field supplier-wide">
+              <span>Keterangan</span>
+              <input id="htiSalesNotes" type="text" autocomplete="off" placeholder="Catatan penjualan">
+            </label>
+          </section>
+
+          <section class="hti-entry-lines-section" aria-label="Rincian penjualan">
+            <div class="hti-entry-lines-toolbar">
+              <strong>Rincian</strong>
+              <button class="ghost-button" type="button" id="htiAddLineBtn">Tambah Baris</button>
+            </div>
+            <small class="hti-entry-lines-note">Nama barang dapat berupa nama proyek atau produk akhir. Di Faktur, pelunasan rincian berarti pembayaran langsung. Di Pre Order, pelunasan rincian dicatat sebagai uang muka.</small>
+            <div class="hti-entry-lines-wrap">
+              <table class="hti-entry-lines-table" aria-label="Rincian penjualan">
+                <thead>
+                  <tr>
+                    <th>Kode Projek</th>
+                    <th>Nama Produk / Proyek Akhir</th>
+                    <th>Qty</th>
+                    <th>Harga Satuan DPP</th>
+                    <th>Diskon</th>
+                    <th>DPP</th>
+                    <th>PPN</th>
+                    <th>Total</th>
+                    <th>Pelunasan</th>
+                    <th>Jenis Bank</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="htiEntryLines"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="hti-footer-upload" aria-label="Upload dokumen penjualan">
+            <div class="hti-upload-title">
+              <strong>Upload Dokumen</strong>
+              <span>File dari device atau HP akan ikut tersimpan ke data yang dibuat.</span>
+            </div>
+            <label class="hti-attachment-caption">
+              <span>Nama / Keterangan</span>
+              <input id="htiAttachmentName" type="text" placeholder="Contoh: Faktur pajak / invoice penjualan">
+            </label>
+            <button class="ghost-button hti-attachment-pick" type="button" id="htiAttachmentPickBtn">Upload dari Device</button>
+            <input id="htiAttachmentFile" type="file" multiple hidden>
+            <small id="htiAttachmentNote">Belum ada file dipilih.</small>
+            <div class="hti-upload-file-list" aria-live="polite"></div>
+          </section>
+
+          <datalist id="htiPaymentSourceOptions"></datalist>
+          <datalist id="htiProjectOptions"></datalist>
+          <datalist id="htiSupplierCodeOptions"></datalist>
+          <datalist id="htiSupplierNameOptions"></datalist>
+        </div>
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="htiEntryCancelBtn">Batal</button>
+          <button class="submit cashbook-add-button" type="submit" id="htiEntrySaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiViewModal" hidden>
+    <section class="portal-modal portal-modal-wide hti-view-modal" role="dialog" aria-modal="true" aria-labelledby="htiViewModalTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="htiViewModalTitle">Detail Penjualan</h2>
+          <span id="htiViewModalMeta">Klik aksi di bawah untuk lanjut.</span>
+        </div>
+        <button class="icon-button" type="button" id="htiViewCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div id="htiViewBody" class="hti-view-body"></div>
+      <section class="hti-footer-upload hti-view-upload" aria-label="Upload dokumen detail penjualan" hidden style="display:none !important">
+        <div class="hti-upload-title">
+          <strong>Upload Dokumen</strong>
+          <span>Upload berikutnya akan menambahkan file ke baris ini.</span>
+        </div>
+        <label class="hti-attachment-caption">
+          <span>Nama / Keterangan</span>
+          <input id="htiViewAttachmentName" type="text" placeholder="Contoh: Faktur pajak / invoice penjualan">
+        </label>
+        <button class="ghost-button hti-attachment-pick" type="button" id="htiViewAttachmentPickBtn">Upload dari Device</button>
+        <input id="htiViewAttachmentFile" type="file" multiple hidden>
+        <small id="htiViewAttachmentNote">Belum ada file dipilih.</small>
+        <div class="hti-upload-file-list" aria-live="polite"></div>
+      </section>
+      <section class="hti-view-documents" id="htiViewDocuments" aria-label="Dokumen terupload"></section>
+      <footer class="portal-modal-footer hti-view-footer">
+        <button class="danger-button hti-view-delete-button" type="button" id="htiViewDeleteBtn">Hapus</button>
+        <button class="ghost-button hti-view-invoice-button" type="button" id="htiViewInvoiceBtn">Faktur</button>
+        <button class="ghost-button hti-view-convert-button" type="button" id="htiViewConvertBtn" hidden>Input Penjualan</button>
+        <button class="ghost-button hti-purchase-input-button" type="button" id="htiViewPurchaseInputBtn">Input Pembelian</button>
+        <button class="submit cashbook-add-button" type="button" id="htiViewPayBtn">Bayar</button>
+        <button class="ghost-button" type="button" id="htiViewEditBtn">Ubah</button>
+        <button class="ghost-button" type="button" id="htiViewCancelBtn">Tutup</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiInvoiceModal" hidden>
+    <section class="portal-modal portal-modal-wide hti-invoice-modal" role="dialog" aria-modal="true" aria-labelledby="htiInvoiceTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="htiInvoiceTitle">Faktur PT X</h2>
+          <span id="htiInvoiceMeta">Preview faktur penjualan.</span>
+        </div>
+        <button class="icon-button" type="button" id="htiInvoiceCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="hti-invoice-toolbar" aria-label="Pengaturan faktur PT X">
+        <label class="form-field">
+          <span>Jenis Dokumen</span>
+          <select id="htiInvoiceType">
+            <option value="sales">Faktur Penjualan</option>
+            <option value="proforma">Proforma Invoice</option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>Rekening</span>
+          <select id="htiInvoiceBank"></select>
+        </label>
+      </div>
+      <div id="htiInvoiceBody" class="hti-invoice-stage"></div>
+      <footer class="portal-modal-footer">
+        <button class="ghost-button" type="button" id="htiInvoiceCancelBtn">Tutup</button>
+        <button class="submit cashbook-add-button" type="button" id="htiInvoicePrintBtn">Print</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiPurchaseChoiceModal" hidden>
+    <section class="portal-modal hti-purchase-choice-modal" role="dialog" aria-modal="true" aria-labelledby="htiPurchaseChoiceTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="htiPurchaseChoiceTitle">Input Pembelian</h2>
+          <span>Pilih jenis pembelian untuk proyek ini.</span>
+        </div>
+        <button class="icon-button" type="button" id="htiPurchaseChoiceCloseBtn" aria-label="Tutup pilihan pembelian">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="hti-purchase-choice-body">
+        <p class="hti-purchase-choice-note">Kode proyek akan dibawa ke pembelian. Nama komponen dan qty diisi manual karena penjualan dapat berupa nama proyek atau produk akhir.</p>
+        <div class="hti-purchase-choice-grid">
+          <button class="submit" type="button" id="htiPurchaseChoiceFpBtn">Dengan PPN</button>
+          <button class="ghost-button" type="button" id="htiPurchaseChoiceNonPpnBtn">Tanpa PPN</button>
+        </div>
+      </div>
+      <footer class="portal-modal-footer">
+        <button class="ghost-button" type="button" id="htiPurchaseChoiceCancelBtn">Batal</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiFileModal" hidden>
+    <section class="portal-modal portal-modal-wide hti-file-modal" role="dialog" aria-modal="true" aria-labelledby="htiFileModalTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="htiFileModalTitle">Dokumen Penjualan</h2>
+          <span id="htiFileModalMeta">Preview dokumen PT X.</span>
+        </div>
+        <button class="icon-button" type="button" id="htiFileCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div id="htiFileBody" class="hti-file-stage"></div>
+      <footer class="portal-modal-footer">
+        <button class="ghost-button" type="button" id="htiFileCancelBtn">Tutup</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiPaymentModal" hidden>
+    <section class="portal-modal hti-payment-modal" role="dialog" aria-modal="true" aria-labelledby="htiPaymentModalTitle">
+      <form id="htiPaymentForm" novalidate>
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="htiPaymentModalTitle">Catat Pembayaran</h2>
+            <span id="htiPaymentModalMeta">Sisa utang</span>
+          </div>
+          <button class="icon-button" type="button" id="htiPaymentCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+        <input type="hidden" id="htiPaymentEntryId">
+        <div class="hti-payment-form-body hti-payment-table-body">
+          <div class="hti-payment-table-top">
+            <div class="hti-payment-balance hti-payment-balance-compact">
+              <span>Sisa piutang terpilih</span>
+              <strong id="htiPaymentOutstanding">Rp0</strong>
+            </div>
+            <div class="hti-payment-advance-hint" id="htiPaymentAdvanceHint" aria-live="polite" hidden></div>
+            <button class="ghost-button hti-payment-add-row-button" type="button" id="htiPaymentAddRowBtn">Tambah Baris</button>
+          </div>
+          <div class="hti-payment-table-wrap">
+            <table class="cashbook-table hti-payment-entry-table">
+              <colgroup>
+                <col style="width: 16%;">
+                <col style="width: 11%;">
+                <col style="width: 27%;">
+                <col style="width: 15%;">
+                <col style="width: 13%;">
+                <col style="width: 14%;">
+                <col style="width: 4%;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Kode Projek</th>
+                  <th>Transaksi</th>
+                  <th>Jenis Bank</th>
+                  <th>Jumlah</th>
+                  <th>Sisa Piutang</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="htiPaymentRows"></tbody>
+            </table>
+          </div>
+          <section class="hti-footer-upload hti-payment-upload" aria-label="Upload dokumen pembayaran">
+            <div class="hti-upload-title">
+              <strong>Upload Dokumen</strong>
+              <span>Bukti bayar akan tersimpan ke transaksi yang dibayar.</span>
+            </div>
+            <label class="hti-attachment-caption">
+              <span>Nama / Keterangan</span>
+              <input id="htiPaymentAttachmentName" type="text" placeholder="Contoh: bukti transfer / kwitansi">
+            </label>
+            <button class="ghost-button hti-attachment-pick" type="button" id="htiPaymentAttachmentPickBtn">Upload Dokumen</button>
+            <input id="htiPaymentAttachmentFile" type="file" multiple hidden>
+            <small id="htiPaymentAttachmentNote">Belum ada file dipilih.</small>
+            <div class="hti-upload-file-list" aria-live="polite"></div>
+          </section>
+          <label class="form-field hti-payment-notes-field">
+            <span>Catatan</span>
+            <input id="htiQuickPaymentNotes" type="text" autocomplete="off" placeholder="Opsional">
+          </label>
+          <div class="hti-payment-legacy-fields" hidden aria-hidden="true">
+            <select id="htiQuickPaymentEntry"></select>
+            <input id="htiQuickPaymentDate" type="text" autocomplete="off">
+            <input id="htiQuickPaymentDatePicker" type="date">
+            <input id="htiQuickPaymentAdvanceAmount" type="text" inputmode="decimal" data-rupiah="true" autocomplete="off">
+            <input id="htiQuickPaymentUseAllAdvance" type="checkbox">
+            <input id="htiQuickPaymentAmount" type="text" inputmode="decimal" data-rupiah="true" autocomplete="off">
+            <input id="htiQuickPaymentSource" type="text" list="htiPaymentSourceOptions" autocomplete="off">
+            <small id="htiPaymentAdvanceAvailable">Tidak ada uang muka tersedia.</small>
+          </div>
+        </div>
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="htiPaymentCancelBtn">Batal</button>
+          <button class="ghost-button hti-payment-edit-button" type="button" id="htiPaymentEditBtn" hidden>Ubah</button>
+          <button class="danger-button" type="button" id="htiPaymentReverseBtn" hidden>Batalkan Pembayaran</button>
+          <button class="submit cashbook-add-button" type="submit" id="htiPaymentSaveBtn">Simpan Pembayaran</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <script src="/app/assets/vendor/xlsx/xlsx.full.min.js" defer></script>
+  <script src="/app/assets/client/client-upload-qr.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-unsaved-guard.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-keyboard-nav.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/hti-viewer.js?v=pt-x-local-3" defer></script>
+    <script src="/app/assets/client/hti-buku-penjualan.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/hti-book-nav.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+node_modules/
+.env
+.env.*
+!.env.example
+data/
+runtime/
+logs/
+backups/
+scripts/
+*.dpapi
+*.log
+
+# Modul internal yang tidak diperlukan oleh demo PT X.
+src/cloud-ui.js
+src/config/
+src/data/
+src/file-repository.js
+src/file-response.js
+src/kk-central-master.js
+src/kk-central-mirror.js
+src/db/runtime-schema.js
+src/modules/*
+!src/modules/client-portal/
+!src/modules/client-portal/routes.js
+
+# Aset identitas klien lama tidak diterbitkan.
+public/branding/*
+!public/branding/pt-x-logo.svg
+!public/branding/pt-x-favicon.svg
+public/client/persada-motor-logo.*
+public/client/tbb-logo.png
+public/client/tbb-signature.png
+

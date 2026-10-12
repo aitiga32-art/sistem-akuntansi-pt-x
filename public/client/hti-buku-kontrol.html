@@ -1,0 +1,255 @@
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Buku Kontrol PT X - Client Portal</title>
+</head>
+<body class="client-portal-app hti-control-page">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="htiClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="htiUserName">-</strong>
+          <span id="htiUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="htiAlert" class="portal-alert" hidden></div>
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="htiBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Buku Kontrol</h1>
+          <p class="portal-subtitle" id="htiSubtitle">Penjualan, pembelian, dan pembayaran per proyek</p>
+        </div>
+        <button class="portal-refresh" type="button" id="htiRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar hti-purchase-toolbar" aria-label="Filter Buku Kontrol">
+        <div class="cashbook-toolbar-actions">
+          <button class="ghost-button" type="button" id="htiExportBtn">Ekspor Data</button>
+          <nav class="hti-book-switcher" data-hti-book-switcher aria-label="Navigasi buku PT X"></nav>
+        </div>
+        <div class="hti-toolbar-filters">
+          <label class="sr-only" for="htiStatusFilter">Filter status</label>
+          <select id="htiStatusFilter" aria-label="Filter status kontrol">
+            <option value="">Semua status</option>
+            <option value="proforma">Pre Order</option>
+            <option value="closed">Tertutup</option>
+            <option value="partial">Menunggu konfirmasi</option>
+            <option value="missing-sales">Belum ada penjualan</option>
+            <option value="unmatched">Belum ada pembelian</option>
+            <option value="allocation">Perlu review alokasi</option>
+          </select>
+          <label class="sr-only" for="htiPaymentFilter">Filter pembayaran</label>
+          <select id="htiPaymentFilter" aria-label="Filter pembayaran">
+            <option value="">Semua pembayaran</option>
+            <option value="receivable">Masih ada piutang</option>
+            <option value="payable">Masih ada utang</option>
+            <option value="settled">Tidak ada sisa</option>
+          </select>
+          <label class="sr-only" for="htiSearchInput">Cari proyek</label>
+          <input class="sales-search-input" id="htiSearchInput" type="search" placeholder="Cari proyek atau customer" autocomplete="off">
+        </div>
+      </section>
+
+      <section class="cashbook-sheet-panel hti-purchase-sheet" aria-label="Tabel Buku Kontrol">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table hti-purchase-table hti-control-table" id="htiControlTable" aria-label="Buku Kontrol PT X">
+            <thead>
+              <tr>
+                <th data-hti-sort-key="projectNo">Kode Project</th>
+                <th data-hti-sort-key="customerName">Nama Customer</th>
+                <th data-hti-sort-key="salesTotal">Penjualan</th>
+                <th data-hti-sort-key="purchaseTotal">Pembelian</th>
+                <th data-hti-sort-key="projectExpenseTotal">Biaya Proyek</th>
+                <th data-hti-sort-key="matchStatus">Status Pengadaan</th>
+                <th data-hti-sort-key="salesOutstanding">Piutang</th>
+                <th data-hti-sort-key="purchaseOutstanding">Utang</th>
+                <th data-hti-sort-key="payAction">Bayar</th>
+                <th data-hti-sort-key="purchaseAction">Input Pembelian</th>
+              </tr>
+            </thead>
+            <tbody id="htiRows">
+              <tr><td colspan="10">Memuat Buku Kontrol...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiControlModal" hidden>
+    <section class="portal-modal portal-modal-wide hti-control-modal" role="dialog" aria-modal="true" aria-labelledby="htiControlModalTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="htiControlModalTitle">Kontrol Proyek</h2>
+          <span id="htiControlModalMeta">Rincian kecocokan dan pembayaran</span>
+        </div>
+        <button class="icon-button" type="button" id="htiControlCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div id="htiControlBody" class="hti-control-detail-body"></div>
+      <footer class="portal-modal-footer">
+        <button class="ghost-button" type="button" id="htiControlCancelBtn">Batal</button>
+        <button class="ghost-button hti-project-close-button" type="button" id="htiControlCloseProjectBtn">Tutup Proyek</button>
+        <button class="submit cashbook-add-button hti-control-pay-button" type="button" id="htiControlPayBtn">Bayar</button>
+        <button class="ghost-button hti-sales-input-button" type="button" id="htiControlSalesBtn">Input Penjualan</button>
+        <button class="submit hti-purchase-input-button" type="button" id="htiControlPurchaseBtn">Input Pembelian</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiControlPaymentModal" hidden>
+    <section class="portal-modal hti-payment-modal hti-control-payment-modal" role="dialog" aria-modal="true" aria-labelledby="htiControlPaymentTitle">
+      <form id="htiControlPaymentForm" novalidate>
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="htiControlPaymentTitle">Catat Pembayaran</h2>
+            <span id="htiControlPaymentMeta">Pilih transaksi proyek.</span>
+          </div>
+          <button class="icon-button" type="button" id="htiControlPaymentCloseBtn" aria-label="Tutup popup pembayaran">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+        <div class="hti-payment-form-body hti-payment-table-body">
+          <div class="hti-payment-table-top">
+            <div class="hti-payment-balance hti-payment-balance-compact">
+              <span>Sisa tagihan terpilih</span>
+              <strong id="htiControlPaymentOutstanding">Rp0</strong>
+            </div>
+            <button class="ghost-button hti-payment-add-row-button" type="button" id="htiControlPaymentAddRowBtn">Tambah Baris</button>
+          </div>
+          <div class="hti-payment-table-wrap">
+            <table class="cashbook-table hti-payment-entry-table hti-control-payment-entry-table">
+              <colgroup>
+                <col style="width: 16%;">
+                <col style="width: 11%;">
+                <col style="width: 27%;">
+                <col style="width: 15%;">
+                <col style="width: 13%;">
+                <col style="width: 14%;">
+                <col style="width: 4%;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Kode Projek</th>
+                  <th>Transaksi</th>
+                  <th>Jenis Bank</th>
+                  <th>Jumlah</th>
+                  <th>Sisa Tagihan</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="htiControlPaymentRows"></tbody>
+            </table>
+          </div>
+          <label class="form-field hti-payment-notes-field">
+            <span>Catatan</span>
+            <input id="htiControlPaymentNotes" type="text" autocomplete="off" placeholder="Opsional">
+          </label>
+          <div class="hti-payment-legacy-fields" hidden aria-hidden="true">
+            <select id="htiControlPaymentEntry"></select>
+            <input id="htiControlPaymentDate" type="text" autocomplete="off">
+            <input id="htiControlPaymentDatePicker" type="date">
+            <input id="htiControlPaymentAmount" type="text" inputmode="decimal" autocomplete="off">
+            <input id="htiControlPaymentSource" type="text" list="htiControlPaymentSources" autocomplete="off">
+            <datalist id="htiControlPaymentSources"></datalist>
+          </div>
+        </div>
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="htiControlPaymentCancelBtn">Batal</button>
+          <button class="submit cashbook-add-button" type="submit" id="htiControlPaymentSaveBtn">Simpan Pembayaran</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiPaymentChoiceModal" hidden>
+    <section class="portal-modal hti-purchase-choice-modal" role="dialog" aria-modal="true" aria-labelledby="htiPaymentChoiceTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="htiPaymentChoiceTitle">Bayar</h2>
+          <span>Pilih transaksi sumber yang akan dibuka.</span>
+        </div>
+        <button class="icon-button" type="button" id="htiPaymentChoiceCloseBtn" aria-label="Tutup pilihan pembayaran">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="hti-purchase-choice-body">
+        <p class="hti-purchase-choice-note">Pembayaran dicatat langsung melalui transaksi sumber agar jurnal dan saldo tetap memakai satu alur.</p>
+        <div class="hti-purchase-choice-grid">
+          <button class="ghost-button" type="button" id="htiPaymentChoiceReceivableBtn">Piutang - Penjualan</button>
+          <button class="ghost-button" type="button" id="htiPaymentChoicePayableBtn">Utang - Pembelian</button>
+        </div>
+      </div>
+      <footer class="portal-modal-footer">
+        <button class="ghost-button" type="button" id="htiPaymentChoiceCancelBtn">Batal</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="htiPurchaseChoiceModal" hidden>
+    <section class="portal-modal hti-purchase-choice-modal" role="dialog" aria-modal="true" aria-labelledby="htiPurchaseChoiceTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="htiPurchaseChoiceTitle">Input Pembelian</h2>
+          <span>Pilih jenis pembelian untuk proyek ini.</span>
+        </div>
+        <button class="icon-button" type="button" id="htiPurchaseChoiceCloseBtn" aria-label="Tutup pilihan pembelian">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="hti-purchase-choice-body">
+        <p class="hti-purchase-choice-note" id="htiPurchaseChoiceNote">Data proyek, barang, dan qty dari penjualan akan dibawa ke rincian pembelian.</p>
+        <div class="hti-purchase-choice-grid">
+          <button class="ghost-button" type="button" id="htiPurchaseChoiceFpBtn">Dengan PPN</button>
+          <button class="ghost-button" type="button" id="htiPurchaseChoiceNonPpnBtn">Tanpa PPN</button>
+        </div>
+      </div>
+      <footer class="portal-modal-footer">
+        <button class="ghost-button" type="button" id="htiPurchaseChoiceCancelBtn">Batal</button>
+      </footer>
+    </section>
+  </div>
+
+  <script src="/app/assets/vendor/xlsx/xlsx.full.min.js" defer></script>
+  <script src="/app/assets/client/client-unsaved-guard.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/hti-buku-kontrol.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/hti-book-nav.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>

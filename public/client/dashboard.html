@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Client Portal - PT X</title>
+</head>
+<body class="client-portal-app">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name" id="portalClientName">Client Portal</p>
+          <p class="portal-client-meta" id="portalClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a class="active" href="#dokumen">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+        <a href="#pekerjaan">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V6a2 2 0 0 1 2-2h12"/><path d="M6 20h12a2 2 0 0 0 2-2V6"/><path d="M8 9h8"/><path d="M8 13h6"/></svg>
+          <span>Pekerjaan</span>
+        </a>
+        <a href="#profil">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Profil</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="portalUserName">-</strong>
+          <span id="portalUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="portalAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <h1 class="portal-title">Client Portal</h1>
+          <p class="portal-subtitle" id="portalSubtitle">Dokumen dan monitoring pekerjaan klien.</p>
+        </div>
+        <button class="portal-refresh" type="button" id="clientRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="summary-grid" aria-label="Ringkasan client portal">
+        <div class="metric">
+          <span>Dokumen</span>
+          <strong id="metricDocuments">0</strong>
+          <small>File tersedia</small>
+        </div>
+        <div class="metric">
+          <span>Pekerjaan</span>
+          <strong id="metricWorks">0</strong>
+          <small>Status aktif</small>
+        </div>
+        <div class="metric">
+          <span>Tindak Lanjut</span>
+          <strong id="metricFollowUps">0</strong>
+          <small>Catatan terbaru</small>
+        </div>
+        <div class="metric">
+          <span>Login Terakhir</span>
+          <strong id="metricLastLogin">-</strong>
+          <small>Waktu akun</small>
+        </div>
+      </section>
+
+      <div class="portal-grid">
+        <section class="panel" id="dokumen" aria-labelledby="documentsTitle">
+          <div class="panel-header">
+            <h2 id="documentsTitle">Dokumen Klien</h2>
+            <span id="documentsCount">0 file</span>
+          </div>
+          <div class="panel-body">
+            <div class="document-list" id="documentsList">
+              <div class="empty-state">Memuat dokumen...</div>
+            </div>
+          </div>
+        </section>
+
+        <div>
+          <section class="panel" id="pekerjaan" aria-labelledby="workTitle">
+            <div class="panel-header">
+              <h2 id="workTitle">Pekerjaan Pajak</h2>
+              <span id="workCount">0 item</span>
+            </div>
+            <div class="panel-body">
+              <div class="work-list" id="workList">
+                <div class="empty-state">Memuat status pekerjaan...</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="followTitle">
+            <div class="panel-header">
+              <h2 id="followTitle">Tindak Lanjut</h2>
+              <span id="followCount">0 catatan</span>
+            </div>
+            <div class="panel-body">
+              <div class="follow-list" id="followList">
+                <div class="empty-state">Memuat tindak lanjut...</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" id="profil" aria-labelledby="profileTitle">
+            <div class="panel-header">
+              <h2 id="profileTitle">Profil Klien</h2>
+              <span>Data master</span>
+            </div>
+            <div class="panel-body">
+              <div class="profile-list" id="profileList">
+                <div class="empty-state">Memuat profil...</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/app/assets/client/client-dashboard.js?v=pt-x-local-3" defer></script>
+</body>
+</html>

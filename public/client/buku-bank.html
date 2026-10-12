@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Buku Bank - Client Portal</title>
+</head>
+<body class="client-portal-app bankbook-page">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="bukuBankClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="bukuBankUserName">-</strong>
+          <span id="bukuBankUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="bukuBankAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="bukuBankBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Buku Bank</h1>
+          <p class="portal-subtitle" id="bukuBankSubtitle">Memuat database Buku Bank...</p>
+        </div>
+        <button class="portal-refresh" type="button" id="bukuBankRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="bankbook-tabs" id="bukuBankTabs" aria-label="Pilihan bank">
+        <button class="bankbook-tab" type="button" disabled>Memuat bank...</button>
+      </section>
+
+      <section class="cashbook-toolbar" aria-label="Aksi Buku Bank">
+        <div class="cashbook-toolbar-actions">
+          <button class="submit cashbook-add-button" type="button" id="bukuBankAddBtn">Tambah Data</button>
+          <button class="ghost-button hti-bank-workflow-button" type="button" id="bukuBankWithdrawBtn" hidden>Tarik Tunai</button>
+          <button class="ghost-button hti-bank-workflow-button" type="button" id="bukuBankTransferBtn" hidden>Transfer Antar Bank</button>
+          <button class="ghost-button hti-bank-workflow-button" type="button" id="bukuBankInterestBtn" hidden>Bunga &amp; Biaya Bank</button>
+          <button class="ghost-button hti-bank-workflow-button" type="button" id="bukuBankMutationBtn" hidden>Cek Mutasi</button>
+          <button class="ghost-button hti-advance-button" type="button" id="bukuBankAdvanceBtn" hidden>Input Uang Muka</button>
+          <button class="ghost-button" type="button" id="bukuBankExportBtn">Download Excel</button>
+          <button class="ghost-button sales-delete-selected-button" type="button" id="bukuBankDeleteSelectedBtn" disabled>Hapus Terpilih</button>
+          <input class="sales-search-input" id="bukuBankSearchInput" type="search" placeholder="Cari data buku bank" autocomplete="off" aria-label="Cari data Buku Bank">
+        </div>
+      </section>
+
+      <section class="cashbook-sheet-panel" aria-label="Tabel Buku Bank">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table bankbook-table">
+            <thead>
+              <tr>
+                <th class="sales-select-head"><input id="bukuBankSelectAll" class="sales-row-checkbox" type="checkbox" aria-label="Pilih semua data Buku Bank"></th>
+                <th class="client-entity-column">Entitas</th>
+                <th>Tanggal</th>
+                <th>COA</th>
+                <th>Nama Akun</th>
+                <th>Keterangan</th>
+                <th><span class="sales-head-label">Uang Masuk</span><span class="sales-head-total" id="bukuBankTotalMasuk">0</span></th>
+                <th><span class="sales-head-label">Uang Keluar</span><span class="sales-head-total" id="bukuBankTotalKeluar">0</span></th>
+                 <th><span class="sales-head-label">Saldo</span><span class="sales-head-total" id="bukuBankTotalSaldo">0</span></th>
+                 <th>Pajak</th>
+                 <th>Dokumen</th>
+                 <th>Aksi</th>
+               </tr>
+             </thead>
+             <tbody id="bukuBankRows">
+               <tr><td colspan="12">Memuat Buku Bank...</td></tr>
+             </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="bukuBankModal" hidden>
+    <section class="portal-modal" role="dialog" aria-modal="true" aria-labelledby="bukuBankModalTitle">
+      <form id="bukuBankForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="bukuBankModalTitle">Tambah Buku Bank</h2>
+            <span id="bukuBankModalMeta">Pilih COA dari database akun.</span>
+          </div>
+          <button class="icon-button" type="button" id="bukuBankCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <input type="hidden" id="bukuBankEntryId">
+
+        <div class="cashbook-form-grid bankbook-native-form">
+          <div class="bankbook-detail-toolbar">
+            <div>
+              <strong>Rincian Transaksi</strong>
+              <small>Isi per baris seperti tabel Excel. Pilih akun dari nomor atau nama akun.</small>
+            </div>
+            <button class="ghost-button" type="button" id="bukuBankAddRowBtn">Tambah Baris</button>
+          </div>
+
+          <div class="bankbook-detail-table-wrap">
+            <table class="bankbook-detail-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>No. Akun</th>
+                  <th>Nama Akun</th>
+                  <th>Keterangan</th>
+                  <th>Uang Masuk</th>
+                  <th>Uang Keluar</th>
+                  <th>Pajak</th>
+                  <th aria-label="Aksi"></th>
+                </tr>
+              </thead>
+              <tbody id="bukuBankDetailRows"></tbody>
+            </table>
+          </div>
+
+          <div class="bankbook-attachment-row">
+            <div>
+              <strong>Lampiran</strong>
+              <small id="bukuBankAttachmentNote">Belum ada file tersimpan.</small>
+            </div>
+            <input id="bukuBankAttachmentFile" type="file" multiple>
+          </div>
+        </div>
+
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="bukuBankCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="bukuBankSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="bukuBankAdvanceModal" hidden>
+    <section class="portal-modal hti-advance-modal" role="dialog" aria-modal="true" aria-labelledby="bukuBankAdvanceTitle">
+      <form id="bukuBankAdvanceForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="bukuBankAdvanceTitle">Catat Uang Muka</h2>
+            <span id="bukuBankAdvanceMeta">Pembayaran sebelum faktur/invoice.</span>
+          </div>
+          <button class="icon-button" type="button" id="bukuBankAdvanceCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <div class="hti-advance-body">
+          <div class="hti-advance-note"><strong>Uang muka tidak memerlukan nomor invoice/faktur.</strong><span>Pilih sumber dana di sini. Saat tagihan diterima, gunakan tombol Bayar dan pilih uang muka sebagai sumber pembayaran.</span></div>
+          <div class="hti-advance-grid">
+            <label class="form-field">
+              <span>Jenis Uang Muka</span>
+              <select id="htiAdvanceType" required>
+                <option value="purchase">Uang Muka Pembelian</option>
+                <option value="sales">Uang Muka Penjualan</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Tanggal</span>
+              <input id="htiAdvanceDate" type="date" required>
+            </label>
+            <label class="form-field">
+              <span>Sumber Dana</span>
+              <select id="htiAdvanceSource" required></select>
+            </label>
+            <label class="form-field">
+              <span>Nominal</span>
+              <input id="htiAdvanceAmount" type="text" inputmode="decimal" data-rupiah="true" placeholder="0" required>
+            </label>
+            <div class="hti-advance-inline-row hti-advance-party-row">
+              <label class="form-field">
+                <span>Kode Proyek <small>(boleh kosong)</small></span>
+                <input id="htiAdvanceProject" type="text" autocomplete="off" placeholder="Contoh: 12">
+              </label>
+              <label class="form-field">
+                <span id="htiAdvancePartyCodeLabel">Kode Supplier</span>
+                <input id="htiAdvancePartyCode" type="text" list="htiAdvanceSupplierCodeOptions" autocomplete="off" placeholder="Kode supplier">
+              </label>
+              <label class="form-field">
+                <span id="htiAdvancePartyLabel">Nama Supplier</span>
+                <input id="htiAdvanceParty" type="text" list="htiAdvanceSupplierNameOptions" autocomplete="off" placeholder="Nama supplier" required>
+              </label>
+            </div>
+            <label class="form-field full">
+              <span>Keterangan</span>
+              <textarea id="htiAdvanceDescription" rows="2" placeholder="Contoh: DP pengadaan perangkat proyek"></textarea>
+            </label>
+          </div>
+          <div class="hti-advance-attachment">
+            <div><strong>Dokumen</strong><small id="htiAdvanceAttachmentNote">Belum ada file tersimpan.</small></div>
+            <input id="htiAdvanceFile" type="file" multiple>
+          </div>
+          <datalist id="htiAdvanceSupplierCodeOptions"></datalist>
+          <datalist id="htiAdvanceSupplierNameOptions"></datalist>
+          <datalist id="htiAdvanceCustomerCodeOptions"></datalist>
+          <datalist id="htiAdvanceCustomerNameOptions"></datalist>
+        </div>
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="bukuBankAdvanceCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="bukuBankAdvanceSaveBtn">Simpan Uang Muka</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="bukuBankTransferModal" hidden>
+    <section class="portal-modal hti-bank-transfer-modal" role="dialog" aria-modal="true" aria-labelledby="bukuBankTransferTitle">
+      <form id="bukuBankTransferForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="bukuBankTransferTitle">Transfer Antar Bank</h2>
+            <span id="bukuBankTransferMeta">Pindah saldo antar kas/bank tanpa input bank manual.</span>
+          </div>
+          <button class="icon-button" type="button" id="bukuBankTransferCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <div class="hti-bank-transfer-body">
+          <div class="hti-bank-transfer-grid">
+            <label class="form-field hti-transfer-main-field">
+              <span>Tanggal</span>
+              <input id="htiBankTransferDate" type="date" required>
+            </label>
+            <label class="form-field hti-transfer-main-field">
+              <span>Dari Bank</span>
+              <select id="htiBankTransferFrom" required></select>
+            </label>
+            <label class="form-field hti-transfer-main-field">
+              <span>Ke Kas/Bank</span>
+              <select id="htiBankTransferTo" required></select>
+            </label>
+            <label class="form-field hti-transfer-main-field">
+              <span>Nominal</span>
+              <input id="htiBankTransferAmount" type="text" inputmode="decimal" data-rupiah="true" placeholder="0" required>
+            </label>
+            <label class="form-field hti-transfer-fee-field">
+              <span>Biaya</span>
+              <input id="htiBankTransferFee" type="text" inputmode="decimal" data-rupiah="true" placeholder="0">
+            </label>
+            <label class="form-field hti-transfer-fee-field">
+              <span>Nama Akun Biaya</span>
+              <select id="htiBankTransferFeeAccount"></select>
+            </label>
+          </div>
+          <div class="hti-bank-transfer-attachment">
+            <div>
+              <strong>Dokumen</strong>
+              <small id="htiBankTransferAttachmentNote">Belum ada file dipilih.</small>
+            </div>
+            <input id="htiBankTransferFile" type="file" multiple>
+            <div class="hti-upload-file-list" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="bukuBankTransferCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="bukuBankTransferSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="bukuBankInterestModal" hidden>
+    <section class="portal-modal hti-bank-interest-modal" role="dialog" aria-modal="true" aria-labelledby="bukuBankInterestTitle">
+      <form id="bukuBankInterestForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="bukuBankInterestTitle">Bunga &amp; Biaya Bank</h2>
+            <span id="bukuBankInterestMeta">Catat jasa giro, administrasi, pajak, dan biaya bank dalam satu proses.</span>
+          </div>
+          <button class="icon-button" type="button" id="bukuBankInterestCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <div class="hti-bank-interest-body">
+          <div class="hti-bank-interest-header-grid">
+            <label class="form-field">
+              <span>Tanggal</span>
+              <input id="htiBankInterestDate" type="date" required>
+            </label>
+            <label class="form-field">
+              <span>Bank</span>
+              <select id="htiBankInterestBank" required></select>
+            </label>
+          </div>
+
+          <div class="hti-bank-interest-fixed-rows">
+            <label class="form-field">
+              <span>Nama Akun Penghasilan</span>
+              <input id="htiBankInterestIncomeAccount" type="text" value="6121 - PENDAPATAN JASA GIRO" readonly aria-readonly="true">
+            </label>
+            <label class="form-field">
+              <span>Nominal Penghasilan</span>
+              <input id="htiBankInterestIncomeAmount" type="text" inputmode="decimal" data-rupiah="true" placeholder="0">
+            </label>
+            <label class="form-field">
+              <span>Nama Akun Administrasi Bank</span>
+              <input id="htiBankInterestAdminAccount" type="text" value="6126 - BIAYA ADM BANK" readonly aria-readonly="true">
+            </label>
+            <label class="form-field">
+              <span>Nominal Administrasi</span>
+              <input id="htiBankInterestAdminAmount" type="text" inputmode="decimal" data-rupiah="true" placeholder="0">
+            </label>
+          </div>
+
+          <section class="hti-bank-interest-fees" aria-labelledby="htiBankInterestFeesTitle">
+            <span id="htiBankInterestFeesTitle" class="sr-only">Pajak atau biaya lainnya</span>
+            <div id="htiBankInterestFeeRows"></div>
+          </section>
+
+          <section class="hti-footer-upload hti-bank-interest-upload" aria-label="Upload dokumen bunga dan biaya bank">
+            <div class="hti-upload-title">
+              <strong>Upload Dokumen</strong>
+              <span>Bukti bank dapat diunggah dari device atau HP.</span>
+            </div>
+            <button class="ghost-button hti-attachment-pick" type="button" id="htiBankInterestAttachmentPickBtn">Upload dari Device</button>
+            <input id="htiBankInterestAttachmentFile" type="file" multiple hidden>
+            <small id="htiBankInterestAttachmentNote">Belum ada file dipilih.</small>
+            <div class="hti-upload-file-list" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <footer class="portal-modal-footer">
+          <button class="ghost-button danger" type="button" id="bukuBankInterestDeleteBtn" hidden>Hapus</button>
+          <span class="portal-modal-footer-spacer"></span>
+          <button class="ghost-button" type="button" id="bukuBankInterestCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="bukuBankInterestSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="bukuBankFileModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="bukuBankFileTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="bukuBankFileTitle">Lihat File</h2>
+          <span id="bukuBankFileMeta">Memuat file...</span>
+        </div>
+        <button class="icon-button" type="button" id="bukuBankFileCloseBtn" aria-label="Tutup popup file">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="cashbook-file-viewer" id="bukuBankFileViewer"></div>
+    </section>
+  </div>
+
+  <script src="/app/assets/client/client-period.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/vendor/xlsx/xlsx.full.min.js" defer></script>
+  <script src="/app/assets/client/client-upload-qr.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-unsaved-guard.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-keyboard-nav.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/buku-bank.js?v=pt-x-local-4" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>
+

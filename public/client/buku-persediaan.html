@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Buku Persediaan - Client Portal</title>
+</head>
+<body class="client-portal-app">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="inventoryClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="inventoryUserName">-</strong>
+          <span id="inventoryUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="inventoryAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="inventoryBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Buku Persediaan</h1>
+          <p class="portal-subtitle" id="inventorySubtitle">Stok unit dari Pembelian SPM dan pengurang dari Buku Penjualan SPM.</p>
+        </div>
+        <button class="portal-refresh" type="button" id="inventoryRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="ledger-summary" aria-label="Ringkasan persediaan">
+        <div class="metric">
+          <span>Total Unit</span>
+          <strong id="inventoryTotal">0</strong>
+          <small>Masuk dari pembelian</small>
+        </div>
+        <div class="metric">
+          <span>Tersedia</span>
+          <strong id="inventoryAvailable">0</strong>
+          <small>Belum dipakai penjualan</small>
+        </div>
+        <div class="metric">
+          <span>Terjual</span>
+          <strong id="inventorySold">0</strong>
+          <small>Sudah ada di Buku Penjualan</small>
+        </div>
+        <div class="metric">
+          <span>DPP Stock</span>
+          <strong id="inventoryDpp">0</strong>
+          <small>Nilai DPP unit tersedia</small>
+        </div>
+      </section>
+
+      <section class="cashbook-toolbar" aria-label="Filter Buku Persediaan">
+        <div class="cashbook-toolbar-actions">
+          <button class="ghost-button inventory-filter-button" type="button" id="inventoryAvailableFilterBtn" aria-pressed="false">Stock Tersedia</button>
+        </div>
+      </section>
+
+      <section class="cashbook-sheet-panel" aria-label="Tabel Buku Persediaan">
+        <div class="cashbook-table-wrap cashbook-table-wrap-sync">
+          <table class="cashbook-table inventory-table">
+            <thead>
+              <tr>
+                <th class="client-entity-column">Entitas</th>
+                <th>Tanggal</th>
+                <th>Sumber</th>
+                <th>No Invoice</th>
+                <th>Nama Barang</th>
+                <th>Warna</th>
+                <th>Nomor Rangka</th>
+                <th>Nomor Mesin</th>
+                <th><span class="sales-head-label">Masuk</span><span class="sales-head-total" id="inventoryTotalMasuk">0</span></th>
+                <th><span class="sales-head-label">Keluar</span><span class="sales-head-total" id="inventoryTotalKeluar">0</span></th>
+                <th><span class="sales-head-label">Sisa</span><span class="sales-head-total" id="inventoryTotalSisa">0</span></th>
+                <th><span class="sales-head-label">DPP</span><span class="sales-head-total" id="inventoryTotalDppHeader">0</span></th>
+                <th>Status</th>
+                <th>No Invoice</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryRows">
+              <tr><td colspan="14">Memuat Buku Persediaan...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cashbook-scrollbar-proxy" id="inventoryScrollProxy" aria-label="Scroll horizontal tabel">
+          <div class="cashbook-scrollbar-spacer" id="inventoryScrollProxyInner"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app/assets/client/client-period.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/buku-persediaan.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>
+

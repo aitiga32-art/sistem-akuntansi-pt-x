@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Pendapatan Lainnya - Client Portal</title>
+</head>
+<body class="client-portal-app">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="incomeClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="incomeUserName">-</strong>
+          <span id="incomeUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="incomeAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="incomeBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Pendapatan Lainnya</h1>
+          <p class="portal-subtitle" id="incomeSubtitle">CV DEMO_MOTOR AMBARAWA | Pendapatan Lainnya</p>
+        </div>
+        <button class="portal-refresh" type="button" id="incomeRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar sales-compact-toolbar" aria-label="Aksi Pendapatan Lainnya">
+        <div class="cashbook-toolbar-actions">
+          <button class="submit cashbook-add-button" type="button" id="incomeAddBtn">Tambah Data</button>
+          <button class="ghost-button cashbook-import-button sales-delete-selected-button" type="button" id="incomeDeleteSelectedBtn" disabled>Hapus Terpilih</button>
+          <input class="sales-search-input" id="incomeSearchInput" type="search" placeholder="Cari pendapatan" autocomplete="off">
+        </div>
+        <div class="client-directory-count" id="incomeCount">0 data</div>
+      </section>
+
+      <section class="cashbook-sheet-panel" aria-label="Tabel Pendapatan Lainnya">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table other-income-table">
+            <thead>
+              <tr>
+                <th class="sales-select-head"><input class="sales-row-checkbox" type="checkbox" id="incomeSelectAll" aria-label="Pilih semua data yang tampil"></th>
+                <th class="client-entity-column">Entitas</th>
+                <th>No Dokumen</th>
+                <th>Tgl Dokumen</th>
+                <th>Nama Customer</th>
+                <th>NIK/NPWP</th>
+                <th>Alamat</th>
+                <th>Keterangan Penghasilan</th>
+                <th>No Faktur</th>
+                <th>Tgl Faktur</th>
+                <th>File Faktur</th>
+                <th data-income-total-key="jumlah"><span class="sales-head-label">Jumlah</span><span class="sales-head-total"></span></th>
+                <th data-income-total-key="dpp"><span class="sales-head-label">DPP</span><span class="sales-head-total"></span></th>
+                <th data-income-total-key="ppn"><span class="sales-head-label">PPN</span><span class="sales-head-total"></span></th>
+                <th data-income-total-key="pph23"><span class="sales-head-label">PPH 23</span><span class="sales-head-total"></span></th>
+                <th data-income-total-key="nilaiDiterima"><span class="sales-head-label">Nilai Diterima</span><span class="sales-head-total"></span></th>
+                <th data-income-total-key="pelunasan"><span class="sales-head-label">Pelunasan</span><span class="sales-head-total"></span></th>
+                <th data-income-total-key="sisaPiutang"><span class="sales-head-label">Sisa Piutang</span><span class="sales-head-total"></span></th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="incomeRows">
+              <tr><td colspan="19">Memuat Pendapatan Lainnya...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="incomeModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="incomeModalTitle">
+      <form id="incomeForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="incomeModalTitle">Tambah Pendapatan Lainnya</h2>
+            <span id="incomeModalMeta">Input dokumen pendapatan selain penjualan unit.</span>
+          </div>
+          <button class="icon-button" type="button" id="incomeCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <input id="incomeEntryId" type="hidden">
+        <div class="sales-form">
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>No Dokumen</span>
+              <input id="incomeNoDokumen" type="text" autocomplete="off" required>
+            </label>
+            <label class="sales-line">
+              <span>Tanggal Dokumen</span>
+              <input id="incomeTanggalDokumen" type="date" required>
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>Nama Customer</span>
+              <input id="incomeNamaCustomer" type="text" autocomplete="off" required>
+            </label>
+            <label class="sales-line">
+              <span>NIK/NPWP</span>
+              <input id="incomeNikNpwp" type="text" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>Alamat</span>
+              <input id="incomeAlamat" type="text" autocomplete="off">
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>Keterangan Penghasilan</span>
+              <input id="incomeKeterangan" type="text" autocomplete="off" required>
+            </label>
+            <label class="sales-line">
+              <span>Jumlah</span>
+              <input id="incomeJumlah" type="text" inputmode="decimal" data-rupiah="true" required>
+            </label>
+            <label class="sales-line">
+              <span>PPH 23 (Opsional)</span>
+              <input id="incomePph23" type="text" inputmode="decimal" data-rupiah="true">
+            </label>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>No Faktur</span>
+              <input id="incomeNoFaktur" type="text" autocomplete="off">
+            </label>
+            <label class="sales-line">
+              <span>Tanggal Faktur</span>
+              <input id="incomeTanggalFaktur" type="date">
+            </label>
+            <label class="sales-line file-line">
+              <span>Upload Faktur</span>
+              <input id="incomeFakturFile" type="file" accept=".pdf,.jpg,.jpeg,.png,image/*,application/pdf" multiple>
+            </label>
+            <small class="cashbook-file-note" id="incomeFakturNote">Belum ada file dipilih.</small>
+          </div>
+
+          <div class="sales-form-section">
+            <label class="sales-line">
+              <span>DPP</span>
+              <input id="incomeDpp" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line">
+              <span>PPN</span>
+              <input id="incomePpn" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+            <label class="sales-line strong">
+              <span>Nilai Diterima</span>
+              <input id="incomeNilaiDiterima" type="text" inputmode="decimal" data-rupiah="true" readonly>
+            </label>
+          </div>
+        </div>
+
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="incomeCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="incomeSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="incomeDetailModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="incomeDetailTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="incomeDetailTitle">Detail Pendapatan Lainnya</h2>
+          <span id="incomeDetailMeta">Rincian dokumen.</span>
+        </div>
+        <button class="icon-button" type="button" id="incomeDetailCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="sales-detail" id="incomeDetailContent"></div>
+      <footer class="portal-modal-footer">
+        <button class="ghost-button" type="button" id="incomeDetailDoneBtn">Tutup</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="incomeSettlementModal" hidden>
+    <section class="portal-modal" role="dialog" aria-modal="true" aria-labelledby="incomeSettlementTitle">
+      <form id="incomeSettlementForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="incomeSettlementTitle">Pelunasan Pendapatan</h2>
+            <span id="incomeSettlementMeta">Input pembayaran pendapatan.</span>
+          </div>
+          <button class="icon-button" type="button" id="incomeSettlementCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <input id="incomeSettlementEntryId" type="hidden">
+        <div class="purchase-form-grid">
+          <label class="field-group">
+            <span>Tanggal Pelunasan</span>
+            <input id="incomeTanggalPelunasan" type="date" required>
+          </label>
+          <label class="field-group">
+            <span>Jumlah Pelunasan</span>
+            <input id="incomePelunasan" type="text" inputmode="decimal" data-rupiah="true" required>
+          </label>
+          <label class="field-group">
+            <span>Sisa Piutang</span>
+            <input id="incomeSisaPiutang" type="text" inputmode="decimal" data-rupiah="true" readonly>
+          </label>
+          <label class="field-group wide">
+            <span>Keterangan Pelunasan</span>
+            <input id="incomeKeteranganPelunasan" type="text" autocomplete="off" placeholder="Opsional">
+          </label>
+        </div>
+
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="incomeSettlementCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit">Simpan Pelunasan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <script src="/app/assets/client/client-period.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-upload-qr.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/pendapatan-lainnya.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>
+

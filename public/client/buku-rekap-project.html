@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Buku Rekap Project - Client Portal</title>
+</head>
+<body class="client-portal-app harisma-project-page">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="projectBookClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="projectBookUserName">-</strong>
+          <span id="projectBookUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="projectBookAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="projectBookBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Buku Rekap Project</h1>
+          <p class="portal-subtitle" id="projectBookSubtitle">Memuat data project...</p>
+        </div>
+        <button class="portal-refresh" type="button" id="projectBookRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="project-book-toolbar" aria-label="Aksi Buku Rekap Project">
+        <div class="project-book-tabs" role="tablist" aria-label="Buku Rekap Project">
+          <button class="project-book-tab active" type="button" data-tab="summary">Ringkasan</button>
+          <button class="project-book-tab" type="button" data-tab="sales">Penjualan</button>
+          <button class="project-book-tab" type="button" data-tab="purchases">Pembelian</button>
+          <button class="project-book-tab" type="button" data-tab="expenses">Biaya</button>
+        </div>
+        <div class="project-book-actions">
+          <button class="submit project-book-add-button" type="button" data-open-form="sales">Tambah Penjualan</button>
+          <button class="submit project-book-add-button" type="button" data-open-form="purchases">Tambah Pembelian</button>
+          <button class="submit project-book-add-button" type="button" data-open-form="expenses">Tambah Biaya</button>
+        </div>
+      </section>
+
+      <section class="project-book-kpis" aria-label="Total Project">
+        <div class="project-book-kpi">
+          <span>Penjualan</span>
+          <strong id="projectBookSalesTotal">0</strong>
+        </div>
+        <div class="project-book-kpi">
+          <span>Pembelian</span>
+          <strong id="projectBookPurchaseTotal">0</strong>
+        </div>
+        <div class="project-book-kpi">
+          <span>Biaya</span>
+          <strong id="projectBookExpenseTotal">0</strong>
+        </div>
+        <div class="project-book-kpi">
+          <span>Laba/Rugi</span>
+          <strong id="projectBookProfitTotal">0</strong>
+        </div>
+      </section>
+
+      <section class="project-book-panel" aria-label="Tabel Buku Rekap Project">
+        <div class="panel-header client-menu-heading">
+          <div>
+            <h2 id="projectBookPanelTitle">Ringkasan Project</h2>
+            <span id="projectBookPanelMeta">0 project</span>
+          </div>
+          <input class="project-book-search" id="projectBookSearchInput" type="search" placeholder="Cari project / transaksi" autocomplete="off">
+        </div>
+        <div class="project-book-table-wrap">
+          <table class="project-book-table">
+            <thead id="projectBookTableHead"></thead>
+            <tbody id="projectBookTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="projectBookFormModal" hidden>
+    <section class="portal-modal portal-modal-wide project-book-modal" role="dialog" aria-modal="true" aria-labelledby="projectBookFormTitle">
+      <form id="projectBookForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="projectBookFormTitle">Tambah Penjualan</h2>
+            <span id="projectBookFormMeta">Buku Rekap Project</span>
+          </div>
+          <button class="icon-button" type="button" id="projectBookFormCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+        <div class="project-book-form-body">
+          <input type="hidden" id="projectBookRecordType">
+          <input type="hidden" id="projectBookRecordId">
+          <label class="form-field" id="projectBookProjectCodeSelectField">
+            <span>Kode Proyek</span>
+            <select id="projectBookProjectCodeSelect"></select>
+          </label>
+          <label class="form-field" id="projectBookProjectCodeInputField">
+            <span>No Faktur Penjualan / Kode Proyek</span>
+            <input id="projectBookProjectCodeInput" type="text" autocomplete="off">
+          </label>
+          <label class="form-field">
+            <span>Tanggal</span>
+            <input id="projectBookDateInput" type="date">
+          </label>
+          <label class="form-field" id="projectBookTaxModeField" hidden>
+            <span>PPN / Non-PPN</span>
+            <select id="projectBookTaxModeSelect">
+              <option value="ppn">PPN</option>
+              <option value="non-ppn">Non-PPN</option>
+            </select>
+          </label>
+          <label class="form-field" id="projectBookCounterpartyField">
+            <span id="projectBookCounterpartyLabel">Customer</span>
+            <input id="projectBookCounterpartyInput" type="text" autocomplete="off">
+          </label>
+          <label class="form-field" id="projectBookCustomerNikField">
+            <span id="projectBookPartyNikLabel">NIK/NPWP Customer</span>
+            <input id="projectBookCustomerNikInput" type="text" autocomplete="off">
+          </label>
+          <label class="form-field form-field-wide" id="projectBookCustomerAddressField">
+            <span id="projectBookPartyAddressLabel">Alamat Customer</span>
+            <input id="projectBookCustomerAddressInput" type="text" autocomplete="off">
+          </label>
+          <datalist id="projectBookCustomerOptions"></datalist>
+          <label class="form-field" id="projectBookCategoryField">
+            <span>Kategori Biaya</span>
+            <select id="projectBookCategoryInput"></select>
+          </label>
+          <label class="form-field form-field-wide" id="projectBookDescriptionField">
+            <span>Uraian</span>
+            <input id="projectBookDescriptionInput" type="text" autocomplete="off">
+          </label>
+          <section class="project-book-sales-items" id="projectBookSalesItemsField" hidden>
+            <div class="project-book-sales-items-head">
+              <div>
+                <h3>Rincian Barang</h3>
+                <span id="projectBookSalesItemsMeta">0 barang | Qty 0 | DPP 0 | PPN 0 | Total 0</span>
+              </div>
+              <button class="ghost-button project-book-sales-add" type="button" id="projectBookAddSalesItemBtn">Tambah Barang</button>
+            </div>
+            <div class="project-book-sales-items-wrap">
+              <table class="project-book-sales-items-table">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Nama Barang</th>
+                    <th>Qty</th>
+                    <th>Harga Satuan</th>
+                    <th>Diskon</th>
+                    <th data-tax-column="dpp">DPP</th>
+                    <th data-tax-column="ppn">PPN</th>
+                    <th>Jumlah</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="projectBookSalesItemsBody"></tbody>
+              </table>
+            </div>
+          </section>
+          <label class="form-field" id="projectBookAmountField">
+            <span id="projectBookAmountLabel">Nilai Penjualan</span>
+            <input id="projectBookAmountInput" type="text" inputmode="decimal" data-rupiah="true" autocomplete="off">
+          </label>
+          <label class="form-field" id="projectBookPaymentSourceField">
+            <span>Metode Pembayaran</span>
+            <select id="projectBookPaymentSourceSelect"></select>
+          </label>
+          <label class="form-field form-field-wide">
+            <span>Catatan</span>
+            <input id="projectBookNoteInput" type="text" autocomplete="off">
+          </label>
+          <label class="form-field form-field-wide project-book-upload-field">
+            <span>Upload File</span>
+            <input id="projectBookAttachmentFile" type="file" multiple>
+            <small id="projectBookAttachmentNote">Belum ada file dipilih.</small>
+          </label>
+        </div>
+        <footer class="portal-modal-actions">
+          <button class="ghost-button" type="button" id="projectBookFormCancelBtn">Batal</button>
+          <button class="submit" type="submit" id="projectBookFormSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="projectBookDetailModal" hidden>
+    <section class="portal-modal portal-modal-wide project-book-detail-modal" role="dialog" aria-modal="true" aria-labelledby="projectBookDetailTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="projectBookDetailTitle">Detail Project</h2>
+          <span id="projectBookDetailMeta">-</span>
+        </div>
+        <button class="icon-button" type="button" id="projectBookDetailCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="project-book-detail-body" id="projectBookDetailBody"></div>
+      <footer class="portal-modal-actions">
+        <button class="ghost-button" type="button" id="projectBookDetailDoneBtn">Tutup</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="projectBookFileModal" hidden>
+    <section class="portal-modal portal-modal-wide project-book-file-modal" role="dialog" aria-modal="true" aria-labelledby="projectBookFileTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="projectBookFileTitle">File Project</h2>
+          <span id="projectBookFileMeta">-</span>
+        </div>
+        <button class="icon-button" type="button" id="projectBookFileCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="project-book-file-body" id="projectBookFileBody"></div>
+      <footer class="portal-modal-actions">
+        <button class="ghost-button" type="button" id="projectBookFileDoneBtn">Tutup</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="projectBookActionModal" hidden>
+    <section class="portal-modal project-book-action-modal" role="dialog" aria-modal="true" aria-labelledby="projectBookActionTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="projectBookActionTitle">Aksi Data</h2>
+          <span id="projectBookActionMeta">-</span>
+        </div>
+        <button class="icon-button" type="button" id="projectBookActionCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="project-book-action-body" id="projectBookActionBody"></div>
+      <footer class="portal-modal-actions">
+        <button class="ghost-button" type="button" id="projectBookActionDoneBtn">Tutup</button>
+      </footer>
+    </section>
+  </div>
+
+  <script src="/app/assets/client/client-upload-qr.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/buku-rekap-project.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>

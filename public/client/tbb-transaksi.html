@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <link rel="stylesheet" href="/app/assets/client/tbb-payment-layout.css?v=20260723-tbb-payment-layout-2">
+  <title>Transaksi DEMO_DISTRIBUTION - Client Portal</title>
+</head>
+<body class="client-portal-app tbb-transaction-page">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="tbbClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="tbbUserName">-</strong>
+          <span id="tbbUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="tbbAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="tbbBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Penjualan & Pembelian DEMO_DISTRIBUTION</h1>
+          <p class="portal-subtitle" id="tbbSubtitle">Input mengikuti format Perusahaan Distribusi Contoh.</p>
+        </div>
+        <button class="portal-refresh" type="button" id="tbbRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar tbb-toolbar" aria-label="Aksi Transaksi DEMO_DISTRIBUTION">
+        <div class="cashbook-toolbar-actions">
+          <div class="tbb-tabs" role="tablist" aria-label="Jenis transaksi">
+            <button class="tbb-tab is-active" type="button" data-tbb-tab="sales" role="tab" aria-selected="true">Penjualan</button>
+            <button class="tbb-tab" type="button" data-tbb-tab="purchases" role="tab" aria-selected="false">Pembelian</button>
+            <button class="tbb-tab" type="button" data-tbb-tab="control" role="tab" aria-selected="false">Kontrol Penjualan</button>
+          </div>
+          <button class="submit cashbook-add-button" type="button" id="tbbAddBtn">Tambah Data</button>
+          <button class="ghost-button" type="button" id="tbbJournalBtn">Lihat Jurnal</button>
+          <button class="ghost-button" type="button" id="tbbExportBtn">Download Excel</button>
+          <div class="sales-search-control">
+            <input class="sales-search-input" id="tbbSearchInput" type="search" placeholder="Cari transaksi" autocomplete="off">
+            <button class="ghost-button sales-search-button" type="button" id="tbbSearchBtn" aria-label="Cari transaksi">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            </button>
+            <div class="tbb-filter-controls" id="tbbFilterControls">
+              <button class="ghost-button tbb-filter-toggle" type="button" id="tbbFilterToggle" aria-expanded="false" aria-controls="tbbFilterDropdown">Filter</button>
+              <div class="tbb-filter-dropdown" id="tbbFilterDropdown" hidden>
+                <label><input type="checkbox" value="paid" data-tbb-filter-option> Sudah lunas</label>
+                <label><input type="checkbox" value="unpaid" data-tbb-filter-option> Belum lunas</label>
+                <label><input type="checkbox" value="uploaded" data-tbb-filter-option> Sudah upload</label>
+                <label><input type="checkbox" value="missing" data-tbb-filter-option> Belum upload</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="client-directory-count" id="tbbCount">0 data</div>
+      </section>
+
+      <section class="cashbook-sheet-panel tbb-panel" data-tbb-panel="sales" aria-label="Daftar Penjualan DEMO_DISTRIBUTION">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table tbb-workpaper-table" id="tbbSalesTable" aria-label="DEMO_DISTRIBUTION Penjualan">
+            <colgroup>
+              <col class="tbb-col-invoice">
+              <col class="tbb-col-date">
+              <col class="tbb-col-name">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-doc-status">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>No Inv</th>
+                <th>Tanggal</th>
+                <th>Nama Customer</th>
+                <th>DPP</th>
+                <th>PPN</th>
+                <th>PPh 22</th>
+                <th>Jumlah Tagihan</th>
+                <th>Sudah Terbayar</th>
+                <th>Sisa Piutang</th>
+                <th>Dokumen</th>
+              </tr>
+            </thead>
+            <tbody id="tbbSalesRows">
+              <tr><td colspan="10">Memuat penjualan...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbb-row-detail-shell" id="tbbSalesDetail" hidden></div>
+      </section>
+
+      <section class="cashbook-sheet-panel tbb-panel" data-tbb-panel="purchases" aria-label="Daftar Pembelian DEMO_DISTRIBUTION" hidden>
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table tbb-workpaper-table" id="tbbPurchaseTable" aria-label="DEMO_DISTRIBUTION Pembelian">
+            <colgroup>
+              <col class="tbb-col-invoice">
+              <col class="tbb-col-doc">
+              <col class="tbb-col-date">
+              <col class="tbb-col-name">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-doc-status">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>No Inv Penjualan</th>
+                <th>No Dok</th>
+                <th>Tanggal</th>
+                <th>Nama Supplier</th>
+                <th>Jumlah Tagihan</th>
+                <th>Sudah Terbayar</th>
+                <th>Sisa Hutang</th>
+                <th>Dokumen</th>
+              </tr>
+            </thead>
+            <tbody id="tbbPurchaseRows">
+              <tr><td colspan="8">Memuat pembelian...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbb-row-detail-shell" id="tbbPurchaseDetail" hidden></div>
+      </section>
+
+      <section class="cashbook-sheet-panel tbb-panel" data-tbb-panel="control" aria-label="Kontrol Penjualan DEMO_DISTRIBUTION" hidden>
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table tbb-workpaper-table" id="tbbControlTable" aria-label="DEMO_DISTRIBUTION Kontrol Penjualan">
+            <colgroup>
+              <col class="tbb-col-invoice">
+              <col class="tbb-col-date">
+              <col class="tbb-col-name">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-money">
+              <col class="tbb-col-status">
+              <col class="tbb-col-status">
+              <col class="tbb-col-status">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>No Inv</th>
+                <th>Tanggal</th>
+                <th>Customer</th>
+                <th>Qty Jual</th>
+                <th>Qty Beli</th>
+                <th>Nilai Jual</th>
+                <th>Nilai Beli</th>
+                <th>Status Qty</th>
+                <th>Sisa Piutang</th>
+                <th>Sisa Utang</th>
+              </tr>
+            </thead>
+            <tbody id="tbbControlRows">
+              <tr><td colspan="10">Memuat kontrol penjualan...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="tbbChoiceModal" hidden>
+    <section class="portal-modal tbb-choice-modal" role="dialog" aria-modal="true" aria-labelledby="tbbChoiceTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="tbbChoiceTitle">Pilih Input Penjualan</h2>
+          <span id="tbbChoiceMeta">Pilih jenis transaksi.</span>
+        </div>
+        <button class="icon-button" type="button" id="tbbChoiceCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="tbb-choice-grid">
+        <button class="tbb-choice-card" type="button" data-tbb-input-choice="transaction">
+          <span class="tbb-choice-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="M9 15h6"/></svg>
+          </span>
+          <span class="tbb-choice-copy">
+            <strong id="tbbChoiceTransactionTitle">Penjualan</strong>
+            <small id="tbbChoiceTransactionText">Input transaksi penjualan.</small>
+          </span>
+          <span class="tbb-choice-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </span>
+        </button>
+        <button class="tbb-choice-card" type="button" data-tbb-input-choice="settlement">
+          <span class="tbb-choice-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-5"/></svg>
+          </span>
+          <span class="tbb-choice-copy">
+            <strong>Pelunasan</strong>
+            <small id="tbbChoiceSettlementText">Lunasi transaksi dari data faktur.</small>
+          </span>
+          <span class="tbb-choice-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="tbbEntryModal" hidden>
+    <section class="portal-modal portal-modal-wide tbb-entry-modal" role="dialog" aria-modal="true" aria-labelledby="tbbEntryModalTitle">
+      <form id="tbbEntryForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="tbbEntryModalTitle">Tambah Penjualan</h2>
+            <span id="tbbEntryModalMeta">Data mengikuti format input DEMO_DISTRIBUTION.</span>
+          </div>
+          <div class="tbb-entry-header-actions" data-tbb-modal-no-drag>
+            <button class="ghost-button tbb-entry-layout-toggle" type="button" id="tbbEntryLayoutBtn" hidden>Format Tabel</button>
+            <button class="icon-button" type="button" id="tbbEntryCloseBtn" aria-label="Tutup popup">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </div>
+        </header>
+        <input type="hidden" id="tbbEntryType">
+        <input type="hidden" id="tbbEntryId">
+        <div id="tbbEntryBody" class="tbb-entry-body"></div>
+        <div class="tbb-footer-upload">
+          <div class="tbb-upload-title"><strong>Upload Dokumen</strong><span>Klik file di daftar untuk melihat, X untuk hapus.</span></div>
+          <label class="tbb-attachment-caption">
+            <span>Nama / Keterangan</span>
+            <input id="tbbAttachmentName" type="text" placeholder="Contoh: Faktur supplier / bukti bayar">
+          </label>
+          <button class="ghost-button tbb-attachment-pick" type="button" id="tbbAttachmentPickBtn">Upload Dokumen</button>
+          <input id="tbbAttachmentFile" type="file" multiple hidden>
+          <small id="tbbAttachmentNote">Belum ada file dipilih.</small>
+          <div id="tbbAttachmentList" class="tbb-attachment-list" aria-live="polite"></div>
+        </div>
+        <footer class="portal-modal-footer">
+          <div class="tbb-view-actions" id="tbbEntryViewActions" hidden></div>
+          <button class="submit cashbook-add-button" type="submit" id="tbbEntrySaveBtn">Simpan</button>
+          <button class="ghost-button" type="button" id="tbbEntryCancelBtn">Batal</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="tbbInvoiceModal" hidden>
+    <section class="portal-modal portal-modal-wide tbb-invoice-modal" role="dialog" aria-modal="true" aria-labelledby="tbbInvoiceTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="tbbInvoiceTitle">Faktur</h2>
+          <span id="tbbInvoiceMeta">Preview dokumen DEMO_DISTRIBUTION.</span>
+        </div>
+        <button class="icon-button" type="button" id="tbbInvoiceCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div id="tbbInvoiceBody" class="tbb-invoice-stage"></div>
+      <footer class="portal-modal-footer">
+        <button class="ghost-button" type="button" id="tbbInvoiceCancelBtn">Tutup</button>
+        <button class="submit cashbook-add-button" type="button" id="tbbInvoicePrintBtn">Print</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="tbbJournalModal" hidden>
+    <section class="portal-modal portal-modal-wide tbb-invoice-modal" role="dialog" aria-modal="true" aria-labelledby="tbbJournalTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="tbbJournalTitle">Jurnal</h2>
+          <span id="tbbJournalMeta">Draft jurnal transaksi DEMO_DISTRIBUTION.</span>
+        </div>
+        <button class="icon-button" type="button" id="tbbJournalCloseBtn" aria-label="Tutup popup">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div id="tbbJournalBody" class="tbb-journal-stage"></div>
+      <footer class="portal-modal-footer">
+        <button class="ghost-button" type="button" id="tbbJournalCancelBtn">Tutup</button>
+      </footer>
+    </section>
+  </div>
+
+  <script src="/app/assets/vendor/xlsx/xlsx.full.min.js" defer></script>
+  <script src="/app/assets/client/client-upload-qr.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/tbb-transaksi.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Buku Kas - Client Portal</title>
+</head>
+<body class="client-portal-app cashbook-page">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="bukuKasClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="bukuKasUserName">-</strong>
+          <span id="bukuKasUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="bukuKasAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="bukuKasBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Buku Kas Kecil</h1>
+          <p class="portal-subtitle" id="bukuKasSubtitle">Memuat database Buku Kas...</p>
+        </div>
+        <button class="portal-refresh" type="button" id="bukuKasRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar" aria-label="Aksi Buku Kas">
+        <div class="cashbook-toolbar-actions">
+          <button class="submit cashbook-add-button" type="button" id="bukuKasAddBtn">Tambah Data</button>
+          <button class="ghost-button hti-advance-button" type="button" id="bukuKasAdvanceBtn" hidden>Input Uang Muka</button>
+          <button class="ghost-button" type="button" id="bukuKasExportBtn">Download Excel</button>
+          <button class="ghost-button sales-delete-selected-button" type="button" id="bukuKasDeleteSelectedBtn" disabled>Hapus Terpilih</button>
+        </div>
+        <div class="client-directory-count" id="bukuKasCoaCount">0 COA</div>
+      </section>
+
+      <section class="cashbook-sheet-panel" aria-label="Tabel Buku Kas">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table bankbook-table">
+            <thead>
+              <tr>
+                <th class="sales-select-head"><input id="bukuKasSelectAll" class="sales-row-checkbox" type="checkbox" aria-label="Pilih semua data Buku Kas"></th>
+                <th class="client-entity-column">Entitas</th>
+                <th>Tanggal</th>
+                <th>COA</th>
+                <th>Nama Akun</th>
+                <th>Keterangan</th>
+                <th><span class="sales-head-label">Uang Masuk</span><span class="sales-head-total" id="bukuKasTotalMasuk">0</span></th>
+                <th><span class="sales-head-label">Uang Keluar</span><span class="sales-head-total" id="bukuKasTotalKeluar">0</span></th>
+                <th><span class="sales-head-label">Saldo</span><span class="sales-head-total" id="bukuKasTotalSaldo">0</span></th>
+                <th>Pajak</th>
+                <th>Dokumen</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="bukuKasRows">
+              <tr><td colspan="12">Memuat Buku Kas...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="bukuKasModal" hidden>
+    <section class="portal-modal" role="dialog" aria-modal="true" aria-labelledby="bukuKasModalTitle">
+      <form id="bukuKasForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="bukuKasModalTitle">Tambah Buku Kas</h2>
+            <span id="bukuKasModalMeta">Pilih COA dari database akun.</span>
+          </div>
+          <button class="icon-button" type="button" id="bukuKasCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <input type="hidden" id="bukuKasEntryId">
+
+        <div class="cashbook-form-grid bankbook-native-form">
+          <div class="bankbook-detail-toolbar">
+            <div>
+              <strong>Rincian Transaksi</strong>
+              <small>Isi per baris seperti tabel Excel. Pilih akun dari nomor atau nama akun.</small>
+            </div>
+            <button class="ghost-button" type="button" id="bukuKasAddRowBtn">Tambah Baris</button>
+          </div>
+
+          <div class="bankbook-detail-table-wrap">
+            <table class="bankbook-detail-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>No. Akun</th>
+                  <th>Nama Akun</th>
+                  <th>Keterangan</th>
+                  <th>Uang Masuk</th>
+                  <th>Uang Keluar</th>
+                  <th>Pajak</th>
+                  <th aria-label="Aksi"></th>
+                </tr>
+              </thead>
+              <tbody id="bukuKasDetailRows"></tbody>
+            </table>
+          </div>
+
+          <div class="bankbook-attachment-row">
+            <div>
+              <strong>Lampiran</strong>
+              <small id="bukuKasAttachmentNote">Belum ada file tersimpan.</small>
+            </div>
+            <input id="bukuKasAttachmentFile" type="file" multiple>
+          </div>
+        </div>
+
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="bukuKasCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="bukuKasSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="portal-modal-backdrop" id="bukuKasFileModal" hidden>
+    <section class="portal-modal portal-modal-wide" role="dialog" aria-modal="true" aria-labelledby="bukuKasFileTitle">
+      <header class="portal-modal-header">
+        <div>
+          <h2 id="bukuKasFileTitle">Lihat File</h2>
+          <span id="bukuKasFileMeta">Memuat file...</span>
+        </div>
+        <button class="icon-button" type="button" id="bukuKasFileCloseBtn" aria-label="Tutup popup file">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <div class="cashbook-file-viewer" id="bukuKasFileViewer"></div>
+    </section>
+  </div>
+
+  <script src="/app/assets/client/client-period.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/vendor/xlsx/xlsx.full.min.js" defer></script>
+  <script src="/app/assets/client/client-upload-qr.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-unsaved-guard.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-keyboard-nav.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/buku-kas.js?v=pt-x-local-4" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/app/assets/client/client-portal.css?v=pt-x-local-3">
+  <title>Saldo Awal - Client Portal</title>
+</head>
+<body class="client-portal-app">
+  <div class="portal-shell">
+    <aside class="portal-sidebar">
+      <div class="portal-logo">
+        <span class="portal-brand-mark" aria-hidden="true">X</span>
+        <div>
+          <p class="portal-client-name">Client Portal</p>
+          <p class="portal-client-meta" id="settingCoaClientMeta">Memuat data klien...</p>
+        </div>
+      </div>
+
+      <nav class="portal-nav" aria-label="Navigasi client portal">
+        <a href="/app/client">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5h5v5"/></svg>
+          <span>Beranda</span>
+        </a>
+        <a href="/app/client/dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          <span>Portal Saya</span>
+        </a>
+        <a class="admin-only" href="/app/client/access-users" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+          <span>Akses User</span>
+        </a>
+      </nav>
+
+      <div class="portal-sidebar-footer">
+        <div class="portal-user">
+          <strong id="settingCoaUserName">-</strong>
+          <span id="settingCoaUserEmail">-</span>
+        </div>
+        <button class="danger-button" type="button" id="clientLogoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <div id="settingCoaAlert" class="portal-alert" hidden></div>
+
+      <header class="portal-topbar">
+        <div>
+          <a class="portal-back-link" id="settingCoaBackLink" href="/app/client">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Menu Klien</span>
+          </a>
+          <h1 class="portal-title">Saldo Awal</h1>
+          <p class="portal-subtitle" id="settingCoaSubtitle">Memuat saldo awal...</p>
+        </div>
+        <button class="portal-refresh" type="button" id="settingCoaRefreshBtn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.39 6.36L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.39 5.64L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>Refresh</span>
+        </button>
+      </header>
+
+      <section class="cashbook-toolbar setting-coa-toolbar" aria-label="Aksi Saldo Awal">
+        <div class="cashbook-toolbar-actions">
+          <button class="submit cashbook-add-button" type="button" id="settingCoaAddBtn">Tambah Akun</button>
+          <input class="sales-search-input" id="settingCoaSearchInput" type="search" placeholder="Cari akun / nama akun" autocomplete="off" aria-label="Cari akun">
+        </div>
+        <div class="client-directory-count" id="settingCoaCount">0 akun</div>
+      </section>
+
+      <section class="client-stat-grid setting-opening-summary" aria-label="Ringkasan saldo awal">
+        <div class="client-stat-card"><span>Total Debit</span><strong id="settingCoaDebitTotal">0</strong></div>
+        <div class="client-stat-card"><span>Total Kredit</span><strong id="settingCoaCreditTotal">0</strong></div>
+        <div class="client-stat-card"><span>Selisih</span><strong id="settingCoaDifferenceTotal">0</strong></div>
+        <div class="client-stat-card"><span>Status</span><strong id="settingCoaBalanceStatus">Memuat</strong></div>
+      </section>
+
+      <section class="cashbook-sheet-panel" aria-label="Tabel Saldo Awal">
+        <div class="cashbook-table-wrap">
+          <table class="cashbook-table setting-coa-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Akun</th>
+                <th>Nama Akun</th>
+                <th>Kelompok</th>
+                <th>Saldo Debit</th>
+                <th>Saldo Kredit</th>
+                <th>Keterangan</th>
+                <th>Update</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="settingCoaRows">
+              <tr><td colspan="9">Memuat saldo awal...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="portal-modal-backdrop" id="settingCoaModal" hidden>
+    <section class="portal-modal" role="dialog" aria-modal="true" aria-labelledby="settingCoaModalTitle">
+      <form id="settingCoaForm">
+        <header class="portal-modal-header">
+          <div>
+            <h2 id="settingCoaModalTitle">Tambah Akun</h2>
+            <span id="settingCoaModalMeta">Tambah atau ubah akun. Saldo awal diisi langsung di tabel.</span>
+          </div>
+          <button class="icon-button" type="button" id="settingCoaCloseBtn" aria-label="Tutup popup">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </header>
+
+        <input type="hidden" id="settingCoaAccountId">
+
+        <div class="cashbook-form-grid">
+          <label class="form-field">
+            <span>No Akun</span>
+            <input id="settingCoaCode" type="text" autocomplete="off" placeholder="Contoh: 1100" pattern="([0-9]{4}|[0-9]-[0-9]{4})" maxlength="6" title="Format akun: 4 digit angka seperti 1100 atau format lama 1-0100." required>
+            <small class="form-hint">Format: 4 digit angka seperti 1100, atau format lama 1-1001.</small>
+          </label>
+          <label class="form-field">
+            <span>Urutan</span>
+            <input id="settingCoaSortOrder" type="number" min="1" step="1" inputmode="numeric">
+          </label>
+          <label class="form-field full">
+            <span>Nama Akun</span>
+            <input id="settingCoaAccountName" type="text" autocomplete="off" placeholder="Contoh: BIAYA OPERASIONAL" required>
+          </label>
+        </div>
+
+        <footer class="portal-modal-footer">
+          <button class="ghost-button" type="button" id="settingCoaCancelBtn">Batal</button>
+          <button class="submit modal-submit" type="submit" id="settingCoaSaveBtn">Simpan</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <script src="/app/assets/client/setting-coa.js?v=pt-x-local-3" defer></script>
+  <script src="/app/assets/client/client-book-nav.js?v=pt-x-local-3" defer></script>
+</body>
+</html>

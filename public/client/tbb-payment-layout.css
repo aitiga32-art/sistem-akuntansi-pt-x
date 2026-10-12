@@ -1,0 +1,71 @@
+#tbbEntryModal .tbb-settlement-section {
+  --tbb-settlement-columns:
+    minmax(96px, .8fr)
+    minmax(136px, 1.1fr)
+    minmax(230px, 2fr)
+    minmax(112px, .9fr)
+    48px
+    minmax(116px, .9fr)
+    minmax(122px, 1fr)
+    34px;
+  min-width: 0;
+}
+
+#tbbEntryModal .tbb-settlement-head,
+#tbbEntryModal .tbb-settlement-row,
+#tbbEntryModal .tbb-settlement-section.is-entity .tbb-settlement-head,
+#tbbEntryModal .tbb-settlement-section.is-entity .tbb-settlement-row {
+  display: grid;
+  grid-template-columns: var(--tbb-settlement-columns);
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+#tbbEntryModal .tbb-settlement-head {
+  padding-inline: 7px;
+}
+
+#tbbEntryModal .tbb-settlement-head > *,
+#tbbEntryModal .tbb-settlement-row > * {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#tbbEntryModal .tbb-settlement-row input,
+#tbbEntryModal .tbb-settlement-row select {
+  width: 100%;
+  min-width: 0;
+}
+
+#tbbEntryModal .tbb-settlement-row .tbb-check-cell {
+  width: 100%;
+  justify-content: center;
+}
+
+#tbbEntryModal .tbb-settlement-row .tbb-line-remove {
+  width: 34px;
+  min-width: 34px;
+  justify-self: end;
+}
+
+@container (max-width: 980px) {
+  #tbbEntryModal .tbb-settlement-head {
+    display: none;
+  }
+
+  #tbbEntryModal .tbb-settlement-row,
+  #tbbEntryModal .tbb-settlement-section.is-entity .tbb-settlement-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (max-width: 640px) {
+  #tbbEntryModal .tbb-settlement-row,
+  #tbbEntryModal .tbb-settlement-section.is-entity .tbb-settlement-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
